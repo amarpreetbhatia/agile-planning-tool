@@ -1,5 +1,34 @@
 // Type definitions for the application
 import { ObjectId } from 'mongoose';
+import { DefaultSession } from 'next-auth';
+
+// Extend NextAuth types
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      githubId: string;
+      username: string;
+      avatarUrl: string;
+      accessToken: string;
+    } & DefaultSession['user'];
+  }
+
+  interface User {
+    githubId?: string;
+    username?: string;
+    avatarUrl?: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    githubId?: string;
+    username?: string;
+    avatarUrl?: string;
+    accessToken?: string;
+  }
+}
 
 // User Types
 export interface IUser {

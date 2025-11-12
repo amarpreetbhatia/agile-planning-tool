@@ -42,13 +42,29 @@ npm install
 cp .env.example .env
 ```
 
-4. Run the development server:
+4. Set up GitHub OAuth App:
+   - Go to GitHub Settings > Developer settings > OAuth Apps
+   - Create a new OAuth App
+   - Set Authorization callback URL to: `http://localhost:3000/api/auth/callback/github`
+   - Copy Client ID and Client Secret to your `.env` file
+
+5. Generate secrets for Auth.js:
+
+```bash
+# Generate NEXTAUTH_SECRET
+openssl rand -base64 32
+
+# Generate ENCRYPTION_KEY
+openssl rand -base64 32
+```
+
+6. Run the development server:
 
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+7. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Project Structure
 

@@ -1,12 +1,19 @@
 import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb';
 
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
 };
 
+type MongoClientCache = {
+  client: MongoClient | null;
+  promise: Promise<MongoClient> | null;
+};
+
 declare global {
   var mongoose: MongooseCache | undefined;
+  var mongoClient: MongoClientCache | undefined;
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -50,5 +57,35 @@ async function connectDB() {
 
   return cached.conn;
 }
+
+// MongoDB client for Auth.js adapter
+let clientCached: MongoClientCache = global.mongoClient || { client: null, promise: null };
+
+if (!global.mongoClient) {
+  global.mongoClient = clientCached;
+}
+
+async function getMongoClient(): Promise<MongoClient> {
+  if (clientCached.client) {
+    return clientCached.client;
+  }
+
+  if (!clientCached.promise) {
+    const client = new MongoClient(MONGODB_URI!);
+    clientCached.promise = client.connect();
+  }
+
+  try {
+    clientCached.client = await clientCached.promise;
+  } catch (e) {
+    clientCached.promise = null;
+    throw e;
+  }
+
+  return clientCached.client;
+}
+
+// Export a promise that resolves to the MongoClient for Auth.js adapter
+export const clientPromise = getMongoClient();
 
 export default connectDB;

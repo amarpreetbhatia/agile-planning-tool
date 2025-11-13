@@ -6,7 +6,7 @@ import User from '@/models/User';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ParticipantList } from '@/components/session/participant-list';
+import { RealTimeParticipantList } from '@/components/session/real-time-participant-list';
 import { SessionLink } from '@/components/session/session-link';
 import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { AlertCircle } from 'lucide-react';
@@ -130,9 +130,10 @@ export default async function SessionPage({ params }: SessionPageProps) {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             <SessionLink sessionId={sessionData.sessionId} />
-            <ParticipantList
-              participants={sessionData.participants}
+            <RealTimeParticipantList
+              initialParticipants={sessionData.participants}
               hostId={sessionData.hostId.toString()}
+              sessionId={sessionData.sessionId}
             />
           </div>
         </div>

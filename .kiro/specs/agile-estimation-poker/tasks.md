@@ -103,7 +103,12 @@
   - Display shareable session link with copy functionality
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 8. Set up Socket.IO server for real-time communication
+- [x] 8. Set up Socket.IO server for real-time communication
+
+
+
+
+
   - Install Socket.IO server and client dependencies
   - Create custom Socket.IO server (socket-server.ts)
   - Implement Socket.IO API handler (app/api/socket/route.ts)
@@ -113,7 +118,16 @@
   - Add connection/disconnection handlers
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 9. Implement real-time participant management
+- [x] 9. Implement real-time participant management
+
+
+
+
+
+
+
+
+
   - Create Socket.IO events for participant join/leave
   - Implement participant online status tracking
   - Build real-time participant list component with online indicators

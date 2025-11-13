@@ -1,9 +1,8 @@
 import NextAuth, { NextAuthConfig } from "next-auth"
 import GitHub from "next-auth/providers/github"
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
-import clientPromise from "./db"
 import bcrypt from "bcryptjs"
 import User from "@/models/User"
+import connectDB from "./db"
 
 // Encryption helper for GitHub access tokens
 async function encryptToken(token: string): Promise<string> {
@@ -23,7 +22,6 @@ export const authConfig: NextAuthConfig = {
       },
     }),
   ],
-  adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -44,6 +42,7 @@ export const authConfig: NextAuthConfig = {
         // Store encrypted access token in database
         if (account.access_token) {
           try {
+            await connectDB()
             const encryptedToken = await encryptToken(account.access_token)
             
             // Update or create user with GitHub data
@@ -87,10 +86,13 @@ export const authConfig: NextAuthConfig = {
     async signIn({ user, account, profile }) {
       console.log("User signed in:", user.email)
     },
-    async signOut({ token }) {
+    async signOut() {
       console.log("User signed out")
     },
   },
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig)
+
+// Export a version of auth that works in middleware (Edge Runtime)
+export const authMiddleware = NextAuth(authConfig).auth

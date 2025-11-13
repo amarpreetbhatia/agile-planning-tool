@@ -21,15 +21,6 @@ declare module 'next-auth' {
   }
 }
 
-declare module 'next-auth/jwt' {
-  interface JWT {
-    githubId?: string;
-    username?: string;
-    avatarUrl?: string;
-    accessToken?: string;
-  }
-}
-
 // User Types
 export interface IUser {
   _id: ObjectId;

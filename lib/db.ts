@@ -18,8 +18,8 @@ declare global {
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+if (!MONGODB_URI && process.env.NODE_ENV !== 'production') {
+  console.warn('Warning: MONGODB_URI environment variable is not defined. Database features will not work.');
 }
 
 /**
@@ -34,6 +34,10 @@ if (!global.mongoose) {
 }
 
 async function connectDB() {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable');
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -43,7 +47,7 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose;
     });
   }
@@ -66,12 +70,16 @@ if (!global.mongoClient) {
 }
 
 async function getMongoClient(): Promise<MongoClient> {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable');
+  }
+
   if (clientCached.client) {
     return clientCached.client;
   }
 
   if (!clientCached.promise) {
-    const client = new MongoClient(MONGODB_URI!);
+    const client = new MongoClient(MONGODB_URI);
     clientCached.promise = client.connect();
   }
 

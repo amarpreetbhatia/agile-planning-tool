@@ -30,9 +30,6 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-// Create index on githubId for fast lookups
-UserSchema.index({ githubId: 1 });
-
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
 export default User;

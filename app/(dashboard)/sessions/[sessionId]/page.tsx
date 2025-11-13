@@ -2,7 +2,14 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import connectDB from '@/lib/db';
 import Session from '@/models/Session';
+import User from '@/models/User';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ParticipantList } from '@/components/session/participant-list';
+import { SessionLink } from '@/components/session/session-link';
+import { SessionJoinHandler } from '@/components/session/session-join-handler';
+import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
   params: Promise<{
@@ -25,9 +32,12 @@ export default async function SessionPage({ params }: SessionPageProps) {
   if (!sessionData) {
     return (
       <main className="container max-w-4xl py-8">
-        <Card>
+        <Card className="border-destructive">
           <CardHeader>
-            <CardTitle>Session Not Found</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-5 w-5" />
+              Session Not Found
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
@@ -39,27 +49,93 @@ export default async function SessionPage({ params }: SessionPageProps) {
     );
   }
 
-  return (
-    <main className="container max-w-6xl py-8">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{sessionData.name}</h1>
-          <p className="text-muted-foreground">Session ID: {sessionData.sessionId}</p>
-        </div>
-
-        <Card>
+  // Check if session is archived
+  if (sessionData.status === 'archived') {
+    return (
+      <main className="container max-w-4xl py-8">
+        <Card className="border-destructive">
           <CardHeader>
-            <CardTitle>Session Active</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-5 w-5" />
+              Session Ended
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              This session page will be fully implemented in the next tasks.
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Participants: {sessionData.participants.length}
+              This session has ended and is no longer accepting participants.
             </p>
           </CardContent>
         </Card>
+      </main>
+    );
+  }
+
+  // Get current user from database
+  const user = await User.findOne({ githubId: session.user.githubId });
+  if (!user) {
+    redirect('/login');
+  }
+
+  // Check if user is already a participant
+  const isParticipant = sessionData.participants.some(
+    (p) => p.userId.toString() === user._id.toString()
+  );
+
+  const isHost = sessionData.hostId.toString() === user._id.toString();
+
+  return (
+    <main className="container max-w-7xl py-8">
+      <SessionJoinHandler sessionId={sessionId} isParticipant={isParticipant} />
+
+      <div className="space-y-6">
+        {/* Session Header */}
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {sessionData.name}
+            </h1>
+            <Badge variant={sessionData.status === 'active' ? 'default' : 'secondary'}>
+              {sessionData.status}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Session ID: {sessionData.sessionId}
+          </p>
+        </div>
+
+        <Separator />
+
+        {/* Main Content Grid */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Planning Poker Session</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Welcome to the estimation session! The full poker interface will be
+                  implemented in upcoming tasks.
+                </p>
+                {isHost && (
+                  <p className="text-sm text-primary mt-4">
+                    You are the host of this session.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            <SessionLink sessionId={sessionData.sessionId} />
+            <ParticipantList
+              participants={sessionData.participants}
+              hostId={sessionData.hostId.toString()}
+            />
+          </div>
+        </div>
       </div>
     </main>
   );

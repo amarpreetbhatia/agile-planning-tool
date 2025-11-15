@@ -166,7 +166,12 @@
   - Add error handling and retry logic for GitHub API failures
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 12. Implement story selection and management
+- [x] 12. Implement story selection and management
+
+
+
+
+
   - Create story selection API route (POST /api/sessions/[sessionId]/story)
   - Build story selection interface for session host
   - Implement Socket.IO event for story broadcast

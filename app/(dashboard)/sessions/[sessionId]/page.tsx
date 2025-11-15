@@ -10,7 +10,7 @@ import { RealTimeParticipantList } from '@/components/session/real-time-particip
 import { SessionLink } from '@/components/session/session-link';
 import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
-import { ImportedStoriesList } from '@/components/github/imported-stories-list';
+import { StoryManager } from '@/components/session/story-manager';
 import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
@@ -125,8 +125,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Welcome to the estimation session! The full poker interface will be
-                  implemented in upcoming tasks.
+                  Welcome to the estimation session! Select a story from the backlog to begin estimation.
                 </p>
                 {isHost && (
                   <p className="text-sm text-primary mt-4">
@@ -136,12 +135,12 @@ export default async function SessionPage({ params }: SessionPageProps) {
               </CardContent>
             </Card>
 
-            {sessionData.stories && sessionData.stories.length > 0 && (
-              <ImportedStoriesList
-                stories={sessionData.stories}
-                selectedStoryId={sessionData.currentStory?.id}
-              />
-            )}
+            <StoryManager
+              sessionId={sessionData.sessionId}
+              initialStories={sessionData.stories || []}
+              initialCurrentStory={sessionData.currentStory}
+              isHost={isHost}
+            />
           </div>
 
           {/* Right Column - Sidebar */}

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, Users, Loader2 } from 'lucide-react';
 import { useReveal } from '@/hooks/use-reveal';
 import { EstimateResults } from '@/components/session/estimate-results';
-import { onRoundRevealed } from '@/lib/socket';
+import { onRoundRevealed, onEstimateFinalized } from '@/lib/socket';
 import { IParticipant } from '@/types';
 
 interface Vote {
@@ -47,6 +47,9 @@ export function RevealControl({
   className,
 }: RevealControlProps) {
   const [revealedResults, setRevealedResults] = useState<EstimateResultsData | null>(null);
+  const [isFinalized, setIsFinalized] = useState(false);
+  const [finalEstimate, setFinalEstimate] = useState<number | undefined>(undefined);
+  
   const { isRevealing, revealEstimates } = useReveal({
     sessionId,
     onRevealSuccess: (results) => {
@@ -54,21 +57,42 @@ export function RevealControl({
     },
   });
 
-  // Reset revealed results when story changes
+  // Reset revealed results and finalization when story changes
   useEffect(() => {
     setRevealedResults(null);
+    setIsFinalized(false);
+    setFinalEstimate(undefined);
   }, [currentStory?.id]);
 
   // Listen for reveal events from Socket.IO
   useEffect(() => {
     const unsubscribe = onRoundRevealed((results: EstimateResultsData) => {
       setRevealedResults(results);
+      setIsFinalized(false);
+      setFinalEstimate(undefined);
     });
 
     return () => {
       unsubscribe();
     };
   }, []);
+
+  // Listen for finalization events from Socket.IO
+  useEffect(() => {
+    const unsubscribe = onEstimateFinalized((value: number) => {
+      setIsFinalized(true);
+      setFinalEstimate(value);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleFinalized = () => {
+    // Refresh the page or update state as needed
+    // The socket event will handle updating the UI
+  };
 
   if (!currentStory) {
     return null;
@@ -89,6 +113,11 @@ export function RevealControl({
           min={revealedResults.min}
           max={revealedResults.max}
           storyTitle={revealedResults.storyTitle}
+          sessionId={sessionId}
+          isHost={isHost}
+          isFinalized={isFinalized}
+          finalEstimate={finalEstimate}
+          onFinalized={handleFinalized}
         />
       </div>
     );

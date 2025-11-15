@@ -5,7 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, CheckCircle2 } from 'lucide-react';
+import { FinalizeControl } from './finalize-control';
 
 interface Vote {
   userId: string;
@@ -20,6 +21,11 @@ interface EstimateResultsProps {
   min: number;
   max: number;
   storyTitle: string;
+  sessionId: string;
+  isHost: boolean;
+  isFinalized?: boolean;
+  finalEstimate?: number;
+  onFinalized?: () => void;
 }
 
 export function EstimateResults({
@@ -28,6 +34,11 @@ export function EstimateResults({
   min,
   max,
   storyTitle,
+  sessionId,
+  isHost,
+  isFinalized = false,
+  finalEstimate,
+  onFinalized,
 }: EstimateResultsProps) {
   // Group votes by value
   const votesByValue = votes.reduce((acc, vote) => {
@@ -72,8 +83,22 @@ export function EstimateResults({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg">Estimation Results</CardTitle>
-        <p className="text-sm text-muted-foreground">{storyTitle}</p>
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-lg flex items-center gap-2">
+              Estimation Results
+              {isFinalized && (
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              )}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">{storyTitle}</p>
+          </div>
+          {isFinalized && finalEstimate !== undefined && (
+            <Badge variant="outline" className="border-green-500 text-green-600 dark:text-green-400">
+              Final: {finalEstimate}
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Statistics Summary */}
@@ -221,6 +246,19 @@ export function EstimateResults({
             })}
           </div>
         </div>
+
+        {/* Finalize Control */}
+        <FinalizeControl
+          sessionId={sessionId}
+          storyTitle={storyTitle}
+          average={average}
+          min={min}
+          max={max}
+          isHost={isHost}
+          isRevealed={true}
+          isFinalized={isFinalized}
+          onFinalized={onFinalized}
+        />
       </CardContent>
     </Card>
   );

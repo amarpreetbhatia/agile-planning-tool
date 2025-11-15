@@ -227,7 +227,12 @@
   - Display average estimate prominently
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 16. Implement estimate finalization
+- [x] 16. Implement estimate finalization
+
+
+
+
+
   - Create finalization API route (POST /api/sessions/[sessionId]/finalize)
   - Build finalization dialog with consensus value input
   - Store final estimate in database with timestamp

@@ -110,6 +110,10 @@ const SessionSchema = new Schema<ISession>(
       type: StorySchema,
       required: false,
     },
+    stories: {
+      type: [StorySchema],
+      default: [],
+    },
     githubIntegration: {
       type: GitHubIntegrationSchema,
       required: false,

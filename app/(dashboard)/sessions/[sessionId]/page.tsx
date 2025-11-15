@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { RealTimeParticipantList } from '@/components/session/real-time-participant-list';
 import { SessionLink } from '@/components/session/session-link';
 import { SessionJoinHandler } from '@/components/session/session-join-handler';
+import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
+import { ImportedStoriesList } from '@/components/github/imported-stories-list';
 import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
@@ -111,7 +113,15 @@ export default async function SessionPage({ params }: SessionPageProps) {
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Planning Poker Session</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Planning Poker Session</CardTitle>
+                  {isHost && (
+                    <GitHubIntegrationDialog
+                      sessionId={sessionData.sessionId}
+                      isHost={isHost}
+                    />
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
@@ -125,6 +135,13 @@ export default async function SessionPage({ params }: SessionPageProps) {
                 )}
               </CardContent>
             </Card>
+
+            {sessionData.stories && sessionData.stories.length > 0 && (
+              <ImportedStoriesList
+                stories={sessionData.stories}
+                selectedStoryId={sessionData.currentStory?.id}
+              />
+            )}
           </div>
 
           {/* Right Column - Sidebar */}

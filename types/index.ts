@@ -66,6 +66,7 @@ export interface ISession {
   status: 'active' | 'archived';
   participants: IParticipant[];
   currentStory?: IStory;
+  stories: IStory[];
   githubIntegration?: IGitHubIntegration;
   createdAt: Date;
   updatedAt: Date;
@@ -90,3 +91,15 @@ export interface IEstimate {
   finalizedAt?: Date;
   createdAt: Date;
 }
+
+// GitHub Integration Types (re-exported from lib/github.ts for convenience)
+export type {
+  IRepository,
+  IIssue,
+  IProjectItem,
+  IGitHubProject,
+  IRateLimitInfo,
+  GitHubAPIError,
+  GitHubTokenInvalidError,
+  GitHubRateLimitError,
+} from '@/lib/github';

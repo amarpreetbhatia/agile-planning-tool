@@ -12,6 +12,8 @@ import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
 import { StoryManager } from '@/components/session/story-manager';
 import { PokerCardSelector } from '@/components/poker/poker-card-selector';
+import { VotingStatus } from '@/components/session/voting-status';
+import { SessionVotingHandler } from '@/components/session/session-voting-handler';
 import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
@@ -89,6 +91,12 @@ export default async function SessionPage({ params }: SessionPageProps) {
   return (
     <main className="container max-w-7xl py-8">
       <SessionJoinHandler sessionId={sessionId} isParticipant={isParticipant} />
+      <SessionVotingHandler
+        sessionId={sessionId}
+        userId={user._id.toString()}
+        isParticipant={isParticipant}
+        initialStory={sessionData.currentStory}
+      />
 
       <div className="space-y-6">
         {/* Session Header */}
@@ -143,24 +151,22 @@ export default async function SessionPage({ params }: SessionPageProps) {
               isHost={isHost}
             />
 
-            {/* Poker Card Selection */}
+            {/* Poker Card Selection - Voting handled by SessionVotingHandler */}
             {isParticipant && (
-              <PokerCardSelector
-                currentStory={sessionData.currentStory}
-                selectedValue={null}
-                onCardSelect={(value) => {
-                  console.log('Card selected:', value);
-                  // TODO: Implement vote casting in task 14
-                }}
-                hasVoted={false}
-                isRoundActive={!!sessionData.currentStory}
-              />
+              <div id="poker-card-selector-container">
+                {/* This will be populated by SessionVotingHandler */}
+              </div>
             )}
           </div>
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             <SessionLink sessionId={sessionData.sessionId} />
+            <VotingStatus
+              participants={sessionData.participants}
+              currentStory={sessionData.currentStory}
+              sessionId={sessionData.sessionId}
+            />
             <RealTimeParticipantList
               initialParticipants={sessionData.participants}
               hostId={sessionData.hostId.toString()}

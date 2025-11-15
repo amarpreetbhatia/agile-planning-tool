@@ -196,7 +196,12 @@
   - Style cards with gradient backgrounds and hover effects
   - _Requirements: 6.1, 6.2_
 
-- [ ] 14. Implement voting logic and state management
+- [x] 14. Implement voting logic and state management
+
+
+
+
+
   - Create vote casting API route (POST /api/sessions/[sessionId]/vote)
   - Implement Socket.IO event for vote status broadcast
   - Store votes in Estimate model with timestamps

@@ -211,7 +211,12 @@
   - Add optimistic UI updates for vote casting
   - _Requirements: 6.3, 6.4, 6.5_
 
-- [ ] 15. Build estimate reveal functionality
+- [x] 15. Build estimate reveal functionality
+
+
+
+
+
   - Create reveal API route (POST /api/sessions/[sessionId]/reveal)
   - Implement host-only reveal authorization
   - Calculate estimate statistics (average, min, max)

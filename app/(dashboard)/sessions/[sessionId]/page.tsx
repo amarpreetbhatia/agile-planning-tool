@@ -12,7 +12,7 @@ import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
 import { StoryManager } from '@/components/session/story-manager';
 import { PokerCardSelector } from '@/components/poker/poker-card-selector';
-import { VotingStatus } from '@/components/session/voting-status';
+import { VotingAndReveal } from '@/components/session/voting-and-reveal';
 import { SessionVotingHandler } from '@/components/session/session-voting-handler';
 import { AlertCircle } from 'lucide-react';
 
@@ -162,15 +162,11 @@ export default async function SessionPage({ params }: SessionPageProps) {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             <SessionLink sessionId={sessionData.sessionId} />
-            <VotingStatus
+            <VotingAndReveal
               participants={sessionData.participants}
               currentStory={sessionData.currentStory}
               sessionId={sessionData.sessionId}
-            />
-            <RealTimeParticipantList
-              initialParticipants={sessionData.participants}
-              hostId={sessionData.hostId.toString()}
-              sessionId={sessionData.sessionId}
+              isHost={isHost}
             />
           </div>
         </div>

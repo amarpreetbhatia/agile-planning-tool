@@ -6,14 +6,14 @@ import User from '@/models/User';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { RealTimeParticipantList } from '@/components/session/real-time-participant-list';
 import { SessionLink } from '@/components/session/session-link';
 import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
 import { StoryManager } from '@/components/session/story-manager';
-import { PokerCardSelector } from '@/components/poker/poker-card-selector';
 import { VotingAndReveal } from '@/components/session/voting-and-reveal';
 import { SessionVotingHandler } from '@/components/session/session-voting-handler';
+import { EndSessionControl } from '@/components/session/end-session-control';
+import { SessionEndHandler } from '@/components/session/session-end-handler';
 import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
@@ -54,25 +54,9 @@ export default async function SessionPage({ params }: SessionPageProps) {
     );
   }
 
-  // Check if session is archived
+  // Check if session is archived - redirect to summary page
   if (sessionData.status === 'archived') {
-    return (
-      <main className="container max-w-4xl py-8">
-        <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
-              Session Ended
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              This session has ended and is no longer accepting participants.
-            </p>
-          </CardContent>
-        </Card>
-      </main>
-    );
+    redirect(`/sessions/${sessionId}/summary`);
   }
 
   // Get current user from database
@@ -91,6 +75,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
   return (
     <main className="container max-w-7xl py-8">
       <SessionJoinHandler sessionId={sessionId} isParticipant={isParticipant} />
+      <SessionEndHandler sessionId={sessionId} />
       <SessionVotingHandler
         sessionId={sessionId}
         userId={user._id.toString()}
@@ -101,17 +86,22 @@ export default async function SessionPage({ params }: SessionPageProps) {
       <div className="space-y-6">
         {/* Session Header */}
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {sessionData.name}
-            </h1>
-            <Badge variant={sessionData.status === 'active' ? 'default' : 'secondary'}>
-              {sessionData.status}
-            </Badge>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold tracking-tight">
+                  {sessionData.name}
+                </h1>
+                <Badge variant={sessionData.status === 'active' ? 'default' : 'secondary'}>
+                  {sessionData.status}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Session ID: {sessionData.sessionId}
+              </p>
+            </div>
+            <EndSessionControl sessionId={sessionData.sessionId} isHost={isHost} />
           </div>
-          <p className="text-sm text-muted-foreground">
-            Session ID: {sessionData.sessionId}
-          </p>
         </div>
 
         <Separator />

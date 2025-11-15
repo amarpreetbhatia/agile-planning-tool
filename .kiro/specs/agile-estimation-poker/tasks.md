@@ -243,7 +243,12 @@
   - Enable next story selection after finalization
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 17. Implement session end functionality
+- [x] 17. Implement session end functionality
+
+
+
+
+
   - Create session end API route (POST /api/sessions/[sessionId]/end)
   - Implement host-only authorization for ending session
   - Broadcast session end event to all participants

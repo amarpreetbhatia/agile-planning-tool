@@ -204,7 +204,7 @@ export function FinalizeEstimateDialog({
               className="text-lg font-semibold"
             />
             <p className="text-xs text-muted-foreground">
-              Enter the team's consensus estimate for this story
+              Enter the team&apos;s consensus estimate for this story
             </p>
           </div>
         </div>

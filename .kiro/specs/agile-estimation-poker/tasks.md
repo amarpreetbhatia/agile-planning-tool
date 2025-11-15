@@ -258,7 +258,12 @@
   - Redirect participants to dashboard on session end
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 18. Build responsive session page layout
+- [x] 18. Build responsive session page layout
+
+
+
+
+
   - Create mobile layout (single column, bottom sheet for cards)
   - Create tablet layout (two columns, side drawer for participants)
   - Create desktop layout (three columns: participants | main | details)

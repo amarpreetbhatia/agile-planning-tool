@@ -47,7 +47,7 @@ export function VotingStatus({ participants, currentStory, sessionId, className 
     };
 
     fetchVotingStatus();
-  }, [sessionId, currentStory?.id]);
+  }, [sessionId, currentStory]);
 
   useEffect(() => {
     // Subscribe to vote cast events

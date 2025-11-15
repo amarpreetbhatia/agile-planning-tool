@@ -11,6 +11,7 @@ import { SessionLink } from '@/components/session/session-link';
 import { SessionJoinHandler } from '@/components/session/session-join-handler';
 import { GitHubIntegrationDialog } from '@/components/github/github-integration-dialog';
 import { StoryManager } from '@/components/session/story-manager';
+import { PokerCardSelector } from '@/components/poker/poker-card-selector';
 import { AlertCircle } from 'lucide-react';
 
 interface SessionPageProps {
@@ -141,6 +142,20 @@ export default async function SessionPage({ params }: SessionPageProps) {
               initialCurrentStory={sessionData.currentStory}
               isHost={isHost}
             />
+
+            {/* Poker Card Selection */}
+            {isParticipant && (
+              <PokerCardSelector
+                currentStory={sessionData.currentStory}
+                selectedValue={null}
+                onCardSelect={(value) => {
+                  console.log('Card selected:', value);
+                  // TODO: Implement vote casting in task 14
+                }}
+                hasVoted={false}
+                isRoundActive={!!sessionData.currentStory}
+              />
+            )}
           </div>
 
           {/* Right Column - Sidebar */}

@@ -181,7 +181,12 @@
   - Update current story in session database
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 13. Build planning poker card selection UI
+- [x] 13. Build planning poker card selection UI
+
+
+
+
+
   - Create poker card component with Fibonacci values (1, 2, 3, 5, 8, 13, 21)
   - Implement card grid layout (responsive: 2-3 cols mobile, 4-5 cols desktop)
   - Add card selection interaction with visual feedback

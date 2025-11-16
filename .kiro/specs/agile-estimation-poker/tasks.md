@@ -311,6 +311,7 @@
 
 
 
+
   - Create session history API route (GET /api/sessions/history)
   - Build archived sessions list component
   - Create session detail view with all estimates

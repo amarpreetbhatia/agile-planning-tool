@@ -1,5 +1,6 @@
 'use client';
 
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,28 @@ interface StoryDisplayProps {
   isHost: boolean;
   onClearStory?: () => void;
 }
+
+const storyVariants = {
+  initial: { opacity: 0, y: 20, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 300,
+      damping: 24,
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20, 
+    scale: 0.95,
+    transition: {
+      duration: 0.2,
+    }
+  },
+};
 
 export function StoryDisplay({ story, isHost, onClearStory }: StoryDisplayProps) {
   if (!story) {
@@ -33,65 +56,84 @@ export function StoryDisplay({ story, isHost, onClearStory }: StoryDisplayProps)
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <BookOpen className="h-4 w-4" />
-            Current Story
-          </CardTitle>
-          {isHost && onClearStory && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClearStory}
-              className="h-8 w-8 p-0"
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={story.id}
+        variants={storyVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <BookOpen className="h-4 w-4" />
+                Current Story
+              </CardTitle>
+              {isHost && onClearStory && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClearStory}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Clear story</span>
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <motion.div 
+              className="space-y-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
             >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Clear story</span>
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="text-lg font-semibold leading-tight">{story.title}</h3>
-            {story.source === 'github' && story.githubIssueNumber && story.githubRepoFullName && (
-              <a
-                href={`https://github.com/${story.githubRepoFullName}/issues/${story.githubIssueNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground shrink-0"
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              {story.source}
-            </Badge>
-            {story.githubRepoFullName && story.githubIssueNumber && (
-              <span className="text-xs text-muted-foreground">
-                {story.githubRepoFullName} #{story.githubIssueNumber}
-              </span>
-            )}
-          </div>
-        </div>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-lg font-semibold leading-tight">{story.title}</h3>
+                {story.source === 'github' && story.githubIssueNumber && story.githubRepoFullName && (
+                  <a
+                    href={`https://github.com/${story.githubRepoFullName}/issues/${story.githubIssueNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-xs">
+                  {story.source}
+                </Badge>
+                {story.githubRepoFullName && story.githubIssueNumber && (
+                  <span className="text-xs text-muted-foreground">
+                    {story.githubRepoFullName} #{story.githubIssueNumber}
+                  </span>
+                )}
+              </div>
+            </motion.div>
 
-        {story.description && (
-          <div>
-            <h4 className="text-sm font-medium mb-2">Description</h4>
-            <ScrollArea className="h-[200px] rounded-md border p-3">
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {story.description}
-              </p>
-            </ScrollArea>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            {story.description && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <h4 className="text-sm font-medium mb-2">Description</h4>
+                <ScrollArea className="h-[200px] rounded-md border p-3">
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {story.description}
+                  </p>
+                </ScrollArea>
+              </motion.div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
   );
 }

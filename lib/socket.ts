@@ -3,18 +3,34 @@ import type {
   ClientToServerEvents, 
   ServerToClientEvents 
 } from '@/socket-server';
+import { logError, createAppError, ErrorCode } from './error-logger';
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 10;
 
 export interface SocketConfig {
   token: string;
   onConnect?: () => void;
   onDisconnect?: () => void;
   onError?: (error: Error) => void;
+  onReconnecting?: (attempt: number) => void;
+  onReconnectFailed?: () => void;
 }
 
 /**
- * Initialize Socket.IO client connection
+ * Calculate exponential backoff delay
+ */
+function getReconnectDelay(attempt: number): number {
+  const baseDelay = 1000;
+  const maxDelay = 30000;
+  const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+  // Add jitter to prevent thundering herd
+  return delay + Math.random() * 1000;
+}
+
+/**
+ * Initialize Socket.IO client connection with enhanced error handling
  */
 export function initSocket(config: SocketConfig): Socket<ServerToClientEvents, ClientToServerEvents> {
   if (socket?.connected) {
@@ -31,29 +47,86 @@ export function initSocket(config: SocketConfig): Socket<ServerToClientEvents, C
     autoConnect: true,
     reconnection: true,
     reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    reconnectionAttempts: 5,
+    reconnectionDelayMax: 30000,
+    reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
   });
 
   // Connection event handlers
   socket.on('connect', () => {
     console.log('Socket.IO connected:', socket?.id);
+    reconnectAttempts = 0;
     config.onConnect?.();
   });
 
   socket.on('disconnect', (reason) => {
     console.log('Socket.IO disconnected:', reason);
+    
+    // Log disconnect reason
+    logError(
+      createAppError(ErrorCode.SOCKET_ERROR, `Disconnected: ${reason}`),
+      'Socket.IO'
+    );
+    
     config.onDisconnect?.();
   });
 
   socket.on('connect_error', (error) => {
-    console.error('Socket.IO connection error:', error);
+    reconnectAttempts++;
+    console.error(`Socket.IO connection error (attempt ${reconnectAttempts}):`, error);
+    
+    logError(
+      createAppError(
+        ErrorCode.SOCKET_ERROR,
+        `Connection error: ${error.message}`,
+        undefined,
+        { attempt: reconnectAttempts }
+      ),
+      'Socket.IO'
+    );
+    
     config.onError?.(error);
+    
+    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+      config.onReconnecting?.(reconnectAttempts);
+    } else {
+      config.onReconnectFailed?.();
+    }
   });
 
   socket.on('error', (message: string) => {
     console.error('Socket.IO error:', message);
+    
+    logError(
+      createAppError(ErrorCode.SOCKET_ERROR, message),
+      'Socket.IO'
+    );
+    
     config.onError?.(new Error(message));
+  });
+
+  // Handle reconnection attempts
+  socket.io.on('reconnect_attempt', (attempt) => {
+    console.log(`Reconnection attempt ${attempt}/${MAX_RECONNECT_ATTEMPTS}`);
+    config.onReconnecting?.(attempt);
+  });
+
+  socket.io.on('reconnect_failed', () => {
+    console.error('Socket.IO reconnection failed after maximum attempts');
+    
+    logError(
+      createAppError(
+        ErrorCode.SOCKET_ERROR,
+        'Failed to reconnect after maximum attempts'
+      ),
+      'Socket.IO'
+    );
+    
+    config.onReconnectFailed?.();
+  });
+
+  socket.io.on('reconnect', (attempt) => {
+    console.log(`Socket.IO reconnected after ${attempt} attempts`);
+    reconnectAttempts = 0;
   });
 
   return socket;

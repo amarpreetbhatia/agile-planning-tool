@@ -10,7 +10,7 @@ import { StoryManager } from '@/components/session/story-manager';
 import { SessionVotingHandler } from '@/components/session/session-voting-handler';
 import { SessionEndHandler } from '@/components/session/session-end-handler';
 import { SessionPageLayout } from '@/components/session/session-page-layout';
-import { AlertCircle } from 'lucide-react';
+import { SessionNotFound } from '@/components/error/session-not-found';
 
 interface SessionPageProps {
   params: Promise<{
@@ -31,23 +31,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
   const sessionData = await Session.findOne({ sessionId }).lean();
 
   if (!sessionData) {
-    return (
-      <main className="container max-w-4xl py-8">
-        <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="h-5 w-5" />
-              Session Not Found
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              The session you&apos;re looking for doesn&apos;t exist or has been deleted.
-            </p>
-          </CardContent>
-        </Card>
-      </main>
-    );
+    return <SessionNotFound />;
   }
 
   // Check if session is archived - redirect to summary page

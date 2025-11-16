@@ -306,7 +306,11 @@
   - Implement loading spinner animations
   - _Requirements: 6.3, 7.2, 8.5, 9.1_
 
-- [ ] 21. Implement session history and archive view
+- [x] 21. Implement session history and archive view
+
+
+
+
   - Create session history API route (GET /api/sessions/history)
   - Build archived sessions list component
   - Create session detail view with all estimates

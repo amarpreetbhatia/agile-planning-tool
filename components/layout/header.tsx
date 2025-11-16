@@ -36,6 +36,12 @@ export async function Header() {
               >
                 New Session
               </Link>
+              <Link
+                href="/history"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                History
+              </Link>
             </nav>
           )}
         </div>

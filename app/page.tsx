@@ -104,18 +104,20 @@ export default async function Home() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Completed</CardTitle>
-                <CardDescription>
-                  Total sessions completed
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{archivedSessionCount}</p>
-                <p className="text-xs text-muted-foreground">sessions completed</p>
-              </CardContent>
-            </Card>
+            <Link href="/history" className="block">
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <CardTitle>Completed</CardTitle>
+                  <CardDescription>
+                    Total sessions completed
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{archivedSessionCount}</p>
+                  <p className="text-xs text-muted-foreground">sessions completed</p>
+                </CardContent>
+              </Card>
+            </Link>
 
             <Card>
               <CardHeader>

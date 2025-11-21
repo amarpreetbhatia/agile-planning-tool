@@ -4,8 +4,8 @@ import { auth } from "@/lib/auth"
 import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = {
-  title: "Login | Agile Estimation Poker",
-  description: "Sign in with your GitHub account to start estimating",
+  title: "Login | Agile Planning Tool",
+  description: "Sign in with your GitHub account to start planning",
 }
 
 export default async function LoginPage() {

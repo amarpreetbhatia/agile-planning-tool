@@ -89,7 +89,7 @@ export class GitHubService {
 
     this.octokit = new Octokit({
       auth: accessToken,
-      userAgent: 'agile-estimation-poker',
+      userAgent: 'agile-planning-tool',
     });
   }
 
@@ -371,7 +371,7 @@ export class GitHubService {
           owner,
           repo,
           issue_number: issueNumber,
-          body: `📊 **Estimation Result**: ${estimate} story points\n\n_Estimated via Agile Estimation Poker_`,
+          body: `📊 **Estimation Result**: ${estimate} story points\n\n_Estimated via Agile Planning Tool_`,
         });
       }
 

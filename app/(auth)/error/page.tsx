@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const metadata: Metadata = {
-  title: "Authentication Error | Agile Estimation Poker",
+  title: "Authentication Error | Agile Planning Tool",
   description: "An error occurred during authentication",
 }
 

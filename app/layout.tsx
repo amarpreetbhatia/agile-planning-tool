@@ -8,8 +8,8 @@ import { Header } from "@/components/layout/header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Agile Estimation Poker",
-  description: "Collaborative planning poker for agile teams",
+  title: "Agile Planning Tool",
+  description: "Collaborative agile planning and estimation for distributed teams",
 };
 
 export default function RootLayout({

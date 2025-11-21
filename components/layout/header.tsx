@@ -15,10 +15,10 @@ export async function Header() {
           <Link href="/" className="flex items-center gap-2">
             <Zap className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block">
-              Agile Estimation Poker
+              Agile Planning Tool
             </span>
             <span className="font-bold sm:hidden">
-              Poker
+              Planning
             </span>
           </Link>
           

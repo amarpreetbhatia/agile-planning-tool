@@ -148,12 +148,12 @@ export default async function Home() {
         <div className="flex items-center gap-2">
           <Zap className="h-12 w-12 text-primary" />
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Agile Estimation Poker
+            Agile Planning Tool
           </h1>
         </div>
         
         <p className="max-w-2xl text-lg text-muted-foreground sm:text-xl">
-          Collaborative planning poker for distributed teams. Estimate user stories in real-time with your team using GitHub integration.
+          Collaborative agile planning and estimation for distributed teams. Plan sprints, estimate stories, and manage your GitHub projects in real-time.
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -168,9 +168,9 @@ export default async function Home() {
         <div className="mt-12 grid gap-8 sm:grid-cols-3">
           <div className="flex flex-col items-center gap-2">
             <Users className="h-8 w-8 text-primary" />
-            <h3 className="font-semibold">Real-time Collaboration</h3>
+            <h3 className="font-semibold">Team Collaboration</h3>
             <p className="text-sm text-muted-foreground">
-              Estimate together with your team in real-time
+              Product Owners, Dev teams, and Operations collaborate in real-time
             </p>
           </div>
           
@@ -178,15 +178,15 @@ export default async function Home() {
             <Github className="h-8 w-8 text-primary" />
             <h3 className="font-semibold">GitHub Integration</h3>
             <p className="text-sm text-muted-foreground">
-              Import stories directly from GitHub Projects
+              Seamlessly manage GitHub Projects and issues
             </p>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <TrendingUp className="h-8 w-8 text-primary" />
-            <h3 className="font-semibold">Planning Poker</h3>
+            <h3 className="font-semibold">Smart Estimation</h3>
             <p className="text-sm text-muted-foreground">
-              Use Fibonacci sequence for accurate estimates
+              Planning poker with Fibonacci sequence for accurate sprint planning
             </p>
           </div>
         </div>

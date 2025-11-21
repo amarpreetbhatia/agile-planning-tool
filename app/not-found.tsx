@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const metadata: Metadata = {
-  title: '404 - Page Not Found | Agile Estimation Poker',
+  title: '404 - Page Not Found | Agile Planning Tool',
   description: 'The page you are looking for does not exist',
 }
 

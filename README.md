@@ -1,14 +1,17 @@
-# Agile Estimation Poker
+# Agile Planning Tool
 
-A real-time collaborative planning poker application for agile teams, built with Next.js, TypeScript, and MongoDB.
+A comprehensive real-time collaborative agile planning and estimation tool for distributed teams, built with Next.js, TypeScript, and MongoDB.
 
 ## Features
 
-- GitHub OAuth authentication
-- Real-time collaboration with Socket.IO
-- GitHub Projects integration
-- Planning poker estimation sessions
-- Responsive design with Shadcn UI
+- **Team Collaboration**: Product Owners, Development teams, Operations, and Marketing can all collaborate in shared planning sessions
+- **GitHub OAuth Authentication**: Secure login with GitHub accounts
+- **Real-time Collaboration**: Live updates with Socket.IO for seamless team interaction
+- **GitHub Projects Integration**: Import and manage stories directly from GitHub Projects and Issues
+- **Planning Poker Estimation**: Use Fibonacci sequence for accurate story point estimation
+- **Session History**: Track and analyze past planning sessions with detailed statistics
+- **Export Capabilities**: Download session data in JSON or CSV format
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices with Shadcn UI
 
 ## Tech Stack
 

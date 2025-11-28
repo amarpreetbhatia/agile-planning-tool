@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 import { SessionHeader } from './session-header';
 import { SessionLink } from './session-link';
 import { StoryDisplay } from './story-display';
+import { StoryWithComments } from './story-with-comments';
 import { CollapsibleStoryDisplay } from './collapsible-story-display';
 import { VotingAndReveal } from './voting-and-reveal';
 import { EndSessionControl } from './end-session-control';
@@ -21,6 +22,7 @@ interface SessionPageLayoutProps {
   isHost: boolean;
   participants: IParticipant[];
   currentStory?: IStory | null;
+  currentUserId: string;
   storyManager: ReactNode;
   pokerCards: ReactNode;
   githubIntegration?: ReactNode;
@@ -35,6 +37,7 @@ export function SessionPageLayout({
   isHost,
   participants,
   currentStory,
+  currentUserId,
   storyManager,
   pokerCards,
   githubIntegration,
@@ -55,6 +58,7 @@ export function SessionPageLayout({
           isHost={isHost}
           participants={participants}
           currentStory={currentStory}
+          currentUserId={currentUserId}
           storyManager={storyManager}
           pokerCards={pokerCards}
           githubIntegration={githubIntegration}
@@ -76,6 +80,7 @@ export function SessionPageLayout({
           isHost={isHost}
           participants={participants}
           currentStory={currentStory}
+          currentUserId={currentUserId}
           storyManager={storyManager}
           pokerCards={pokerCards}
           githubIntegration={githubIntegration}
@@ -95,6 +100,7 @@ export function SessionPageLayout({
       isHost={isHost}
       participants={participants}
       currentStory={currentStory}
+      currentUserId={currentUserId}
       storyManager={storyManager}
       pokerCards={pokerCards}
       githubIntegration={githubIntegration}
@@ -213,6 +219,7 @@ function TabletSessionPage({
   isHost,
   participants,
   currentStory,
+  currentUserId,
   storyManager,
   pokerCards,
   githubIntegration,
@@ -239,7 +246,11 @@ function TabletSessionPage({
         <div className="grid grid-cols-2 gap-6 h-full p-6">
           {/* Left column - Story and controls */}
           <div className="space-y-6 overflow-auto">
-            <StoryDisplay story={currentStory || null} isHost={isHost} />
+            <StoryWithComments
+              story={currentStory || null}
+              isHost={isHost}
+              sessionId={sessionId}
+            />
             {githubIntegration}
             {storyManager}
             {pokerCards}
@@ -269,6 +280,7 @@ function DesktopSessionPage({
   isHost,
   participants,
   currentStory,
+  currentUserId,
   storyManager,
   pokerCards,
   githubIntegration,
@@ -308,7 +320,11 @@ function DesktopSessionPage({
           {/* Main content - Story and cards */}
           <main className="flex-1 overflow-auto">
             <div className="p-8 space-y-6 max-w-4xl mx-auto">
-              <StoryDisplay story={currentStory || null} isHost={isHost} />
+              <StoryWithComments
+                story={currentStory || null}
+                isHost={isHost}
+                sessionId={sessionId}
+              />
               {githubIntegration}
               {storyManager}
               {pokerCards}

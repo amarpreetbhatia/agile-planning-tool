@@ -71,6 +71,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
         isHost={isHost}
         participants={sessionData.participants}
         currentStory={sessionData.currentStory}
+        currentUserId={user._id.toString()}
         githubIntegration={
           isHost ? (
             <Card>

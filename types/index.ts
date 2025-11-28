@@ -42,6 +42,16 @@ export interface IParticipant {
   isOnline: boolean;
 }
 
+export interface IStoryComment {
+  id: string;
+  userId: ObjectId;
+  username: string;
+  avatarUrl: string;
+  comment: string;
+  createdAt: Date;
+  syncedToGitHub: boolean;
+}
+
 export interface IStory {
   id: string;
   title: string;
@@ -49,6 +59,7 @@ export interface IStory {
   source: 'manual' | 'github';
   githubIssueNumber?: number;
   githubRepoFullName?: string;
+  comments?: IStoryComment[];
 }
 
 export interface IGitHubIntegration {

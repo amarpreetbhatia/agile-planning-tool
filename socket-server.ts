@@ -25,6 +25,7 @@ export interface ServerToClientEvents {
   'error': (message: string) => void;
   'chat:message': (message: any) => void;
   'chat:typing': (userId: string, username: string, isTyping: boolean) => void;
+  'story:comment': (storyId: string, comment: any) => void;
 }
 
 export interface SocketData {

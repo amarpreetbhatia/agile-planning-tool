@@ -451,6 +451,27 @@ export class GitHubService {
   }
 
   /**
+   * Post a comment on a GitHub issue
+   */
+  async postIssueComment(
+    owner: string,
+    repo: string,
+    issueNumber: number,
+    comment: string
+  ): Promise<void> {
+    try {
+      await this.octokit.issues.createComment({
+        owner,
+        repo,
+        issue_number: issueNumber,
+        body: comment,
+      });
+    } catch (error: any) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
    * Handle GitHub API errors and convert to custom error types
    */
   private handleError(error: any): Error {

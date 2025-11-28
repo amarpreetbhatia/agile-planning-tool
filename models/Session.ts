@@ -28,6 +28,41 @@ const ParticipantSchema = new Schema<IParticipant>(
   { _id: false }
 );
 
+const StoryCommentSchema = new Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    avatarUrl: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    syncedToGitHub: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false }
+);
+
 const StorySchema = new Schema<IStory>(
   {
     id: {
@@ -54,6 +89,10 @@ const StorySchema = new Schema<IStory>(
     githubRepoFullName: {
       type: String,
       required: false,
+    },
+    comments: {
+      type: [StoryCommentSchema],
+      default: [],
     },
   },
   { _id: false }

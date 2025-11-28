@@ -11,6 +11,7 @@ import { SessionVotingHandler } from '@/components/session/session-voting-handle
 import { SessionEndHandler } from '@/components/session/session-end-handler';
 import { SessionPageLayout } from '@/components/session/session-page-layout';
 import { SessionNotFound } from '@/components/error/session-not-found';
+import { SessionChatWrapper } from '@/components/session/session-chat-wrapper';
 
 interface SessionPageProps {
   params: Promise<{
@@ -103,6 +104,14 @@ export default async function SessionPage({ params }: SessionPageProps) {
             <div id="poker-card-selector-container">
               {/* This will be populated by SessionVotingHandler */}
             </div>
+          ) : null
+        }
+        chatPanel={
+          isParticipant ? (
+            <SessionChatWrapper
+              sessionId={sessionData.sessionId}
+              currentUserId={user._id.toString()}
+            />
           ) : null
         }
       />

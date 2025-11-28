@@ -291,3 +291,29 @@ export function onSessionEnded(callback: () => void) {
 export function isConnected(): boolean {
   return socket?.connected ?? false;
 }
+
+/**
+ * Send typing indicator
+ */
+export function sendTypingIndicator(sessionId: string, isTyping: boolean) {
+  if (!socket?.connected) {
+    throw new Error('Socket not connected');
+  }
+  socket.emit('chat:typing', sessionId, isTyping);
+}
+
+/**
+ * Subscribe to chat message events
+ */
+export function onChatMessage(callback: (message: any) => void) {
+  socket?.on('chat:message', callback);
+  return () => socket?.off('chat:message', callback);
+}
+
+/**
+ * Subscribe to typing indicator events
+ */
+export function onChatTyping(callback: (userId: string, username: string, isTyping: boolean) => void) {
+  socket?.on('chat:typing', callback);
+  return () => socket?.off('chat:typing', callback);
+}

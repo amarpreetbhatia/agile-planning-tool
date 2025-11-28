@@ -24,6 +24,7 @@ interface SessionPageLayoutProps {
   storyManager: ReactNode;
   pokerCards: ReactNode;
   githubIntegration?: ReactNode;
+  chatPanel?: ReactNode;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ export function SessionPageLayout({
   storyManager,
   pokerCards,
   githubIntegration,
+  chatPanel,
   className,
 }: SessionPageLayoutProps) {
   const isMobile = useIsMobile();
@@ -45,36 +47,42 @@ export function SessionPageLayout({
   // Mobile Layout
   if (isMobile) {
     return (
-      <MobileSessionPage
-        sessionName={sessionName}
-        sessionId={sessionId}
-        status={status}
-        isHost={isHost}
-        participants={participants}
-        currentStory={currentStory}
-        storyManager={storyManager}
-        pokerCards={pokerCards}
-        githubIntegration={githubIntegration}
-        className={className}
-      />
+      <>
+        <MobileSessionPage
+          sessionName={sessionName}
+          sessionId={sessionId}
+          status={status}
+          isHost={isHost}
+          participants={participants}
+          currentStory={currentStory}
+          storyManager={storyManager}
+          pokerCards={pokerCards}
+          githubIntegration={githubIntegration}
+          className={className}
+        />
+        {chatPanel}
+      </>
     );
   }
 
   // Tablet Layout
   if (isTablet) {
     return (
-      <TabletSessionPage
-        sessionName={sessionName}
-        sessionId={sessionId}
-        status={status}
-        isHost={isHost}
-        participants={participants}
-        currentStory={currentStory}
-        storyManager={storyManager}
-        pokerCards={pokerCards}
-        githubIntegration={githubIntegration}
-        className={className}
-      />
+      <>
+        <TabletSessionPage
+          sessionName={sessionName}
+          sessionId={sessionId}
+          status={status}
+          isHost={isHost}
+          participants={participants}
+          currentStory={currentStory}
+          storyManager={storyManager}
+          pokerCards={pokerCards}
+          githubIntegration={githubIntegration}
+          className={className}
+        />
+        {chatPanel}
+      </>
     );
   }
 
@@ -90,6 +98,7 @@ export function SessionPageLayout({
       storyManager={storyManager}
       pokerCards={pokerCards}
       githubIntegration={githubIntegration}
+      chatPanel={chatPanel}
       className={className}
     />
   );
@@ -252,7 +261,7 @@ function TabletSessionPage({
   );
 }
 
-// Desktop: Three columns (participants | main | details)
+// Desktop: Three columns (participants | main | chat)
 function DesktopSessionPage({
   sessionName,
   sessionId,
@@ -263,6 +272,7 @@ function DesktopSessionPage({
   storyManager,
   pokerCards,
   githubIntegration,
+  chatPanel,
   className,
 }: SessionPageLayoutProps) {
   return (
@@ -305,12 +315,8 @@ function DesktopSessionPage({
             </div>
           </main>
 
-          {/* Right panel - Additional space for future features */}
-          <aside className="w-96 border-l bg-muted/40 overflow-auto">
-            <div className="p-6">
-              {/* This space can be used for estimate history, analytics, etc. */}
-            </div>
-          </aside>
+          {/* Right panel - Chat */}
+          {chatPanel}
         </div>
       </div>
     </div>

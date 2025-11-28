@@ -11,6 +11,7 @@ export interface ClientToServerEvents {
   'round:reveal': (sessionId: string) => void;
   'estimate:finalize': (sessionId: string, value: number) => void;
   'session:end': (sessionId: string) => void;
+  'chat:typing': (sessionId: string, isTyping: boolean) => void;
 }
 
 export interface ServerToClientEvents {
@@ -22,6 +23,8 @@ export interface ServerToClientEvents {
   'estimate:finalized': (value: number) => void;
   'session:ended': () => void;
   'error': (message: string) => void;
+  'chat:message': (message: any) => void;
+  'chat:typing': (userId: string, username: string, isTyping: boolean) => void;
 }
 
 export interface SocketData {
@@ -236,6 +239,12 @@ function setupSocketHandlers(
           }
         });
       }
+    });
+
+    // Chat typing indicator handler
+    socket.on('chat:typing', (sessionId: string, isTyping: boolean) => {
+      // Broadcast typing status to other participants (not to sender)
+      socket.to(sessionId).emit('chat:typing', socket.data.userId!, socket.data.username!, isTyping);
     });
 
     // Disconnection handler

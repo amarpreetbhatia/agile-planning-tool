@@ -142,6 +142,19 @@ export interface IInvitation {
   respondedAt?: Date;
 }
 
+// Chat Message Types (Phase 2)
+export interface IChatMessage {
+  _id: ObjectId;
+  sessionId: ObjectId; // Reference to Session
+  userId: ObjectId; // Reference to User
+  username: string;
+  avatarUrl: string;
+  message: string;
+  type: 'text' | 'system'; // System messages for events
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Permission Types
 export type ProjectRole = 'owner' | 'admin' | 'member';
 

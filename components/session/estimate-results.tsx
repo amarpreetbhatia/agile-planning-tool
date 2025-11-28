@@ -4,10 +4,22 @@ import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TrendingUp, TrendingDown, Minus, CheckCircle2, MessageSquare } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, CheckCircle2, MessageSquare, RotateCcw, Loader2 } from 'lucide-react';
 import { FinalizeControl } from './finalize-control';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Vote {
   userId: string;
@@ -28,6 +40,10 @@ interface EstimateResultsProps {
   isFinalized?: boolean;
   finalEstimate?: number;
   onFinalized?: () => void;
+  currentRound?: number;
+  canRevote?: boolean;
+  onRevote?: () => void;
+  isRevoting?: boolean;
 }
 
 export function EstimateResults({
@@ -41,6 +57,10 @@ export function EstimateResults({
   isFinalized = false,
   finalEstimate,
   onFinalized,
+  currentRound = 1,
+  canRevote = false,
+  onRevote,
+  isRevoting = false,
 }: EstimateResultsProps) {
   // Group votes by value
   const votesByValue = votes.reduce((acc, vote) => {
@@ -92,14 +112,19 @@ export function EstimateResults({
               {isFinalized && (
                 <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
               )}
+              {currentRound > 1 && (
+                <Badge variant="outline">Round {currentRound}</Badge>
+              )}
             </CardTitle>
             <p className="text-sm text-muted-foreground">{storyTitle}</p>
           </div>
-          {isFinalized && finalEstimate !== undefined && (
-            <Badge variant="outline" className="border-green-500 text-green-600 dark:text-green-400">
-              Final: {finalEstimate}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {isFinalized && finalEstimate !== undefined && (
+              <Badge variant="outline" className="border-green-500 text-green-600 dark:text-green-400">
+                Final: {finalEstimate}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -304,6 +329,61 @@ export function EstimateResults({
               </div>
             </div>
           </>
+        )}
+
+        {/* Re-vote and Finalize Controls */}
+        {isHost && !isFinalized && (
+          <div className="flex gap-2">
+            {canRevote && onRevote && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="flex-1" disabled={isRevoting}>
+                    {isRevoting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Starting...
+                      </>
+                    ) : (
+                      <>
+                        <RotateCcw className="mr-2 h-4 w-4" />
+                        Re-vote
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Start Re-voting?</AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-2">
+                      <p>
+                        This will start Round {currentRound + 1} and allow all participants to vote again.
+                      </p>
+                      <p className="text-sm">
+                        Re-voting is useful when estimates diverge significantly and the team needs
+                        more discussion to reach consensus.
+                      </p>
+                      {currentRound === 2 && (
+                        <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                          Note: This will be the final round (maximum 3 rounds).
+                        </p>
+                      )}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onRevote}>
+                      Start Round {currentRound + 1}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+            {currentRound >= 3 && !canRevote && (
+              <p className="text-xs text-muted-foreground text-center py-2">
+                Maximum rounds reached (3/3)
+              </p>
+            )}
+          </div>
         )}
 
         {/* Finalize Control */}

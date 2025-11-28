@@ -349,3 +349,11 @@ export function onVotingModeChanged(callback: (votingMode: string) => void) {
   socket?.on('voting-mode:changed', callback);
   return () => socket?.off('voting-mode:changed', callback);
 }
+
+/**
+ * Subscribe to re-vote events
+ */
+export function onRevote(callback: (data: { roundNumber: number; storyId: string; storyTitle: string }) => void) {
+  socket?.on('round:revote', callback);
+  return () => socket?.off('round:revote', callback);
+}

@@ -568,7 +568,12 @@
   - Show confirmation when changing mode
   - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5_
 
-- [ ] 37. Implement re-voting functionality
+- [x] 37. Implement re-voting functionality
+
+
+
+
+
   - Create re-voting API route (POST /api/sessions/[sessionId]/revote)
   - Store previous round votes before clearing
   - Increment round number

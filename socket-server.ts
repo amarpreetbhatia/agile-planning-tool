@@ -21,6 +21,7 @@ export interface ServerToClientEvents {
   'vote:status': (userId: string, hasVoted: boolean, votingMode: string, value?: number) => void;
   'story:selected': (story: any) => void;
   'round:revealed': (results: any) => void;
+  'round:revote': (data: { roundNumber: number; storyId: string; storyTitle: string }) => void;
   'estimate:finalized': (value: number) => void;
   'session:ended': () => void;
   'error': (message: string) => void;

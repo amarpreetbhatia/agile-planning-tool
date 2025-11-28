@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { onVoteCast, onVoteStatus, onVotingModeChanged } from '@/lib/socket';
+import { onVoteCast, onVoteStatus, onVotingModeChanged, onRevote } from '@/lib/socket';
 import { ISerializedParticipant } from '@/types';
 import { RevealControl } from '@/components/session/reveal-control';
 import { ResponsiveParticipantList } from '@/components/session/responsive-participant-list';
 import { VotingModeSelector } from '@/components/session/voting-mode-selector';
+import { VoteHistoryPanel } from '@/components/session/vote-history-panel';
 
 interface VotingAndRevealProps {
   participants: ISerializedParticipant[];
@@ -38,6 +39,7 @@ export function VotingAndReveal({
   const [voteStatus, setVoteStatus] = useState<VoteStatus>({});
   const [voteValues, setVoteValues] = useState<VoteValues>({});
   const [votingMode, setVotingMode] = useState<'anonymous' | 'open'>(initialVotingMode);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Fetch initial vote status
   useEffect(() => {
@@ -104,10 +106,22 @@ export function VotingAndReveal({
       }
     });
 
+    // Subscribe to re-vote events
+    const unsubscribeRevote = onRevote((data) => {
+      // Clear vote status and values when re-vote starts
+      setVoteStatus({});
+      setVoteValues({});
+      // Show history panel when there are multiple rounds
+      if (data.roundNumber > 1) {
+        setShowHistory(true);
+      }
+    });
+
     return () => {
       unsubscribeVoteCast();
       unsubscribeVoteStatus();
       unsubscribeVotingMode();
+      unsubscribeRevote();
     };
   }, []);
 
@@ -142,6 +156,15 @@ export function VotingAndReveal({
         votingMode={votingMode}
         className="mb-6"
       />
+
+      {/* Vote History Panel (shows when there are multiple rounds) */}
+      {showHistory && currentStory && (
+        <VoteHistoryPanel
+          sessionId={sessionId}
+          storyId={currentStory.id}
+          className="mb-6"
+        />
+      )}
 
       {/* Participant Voting Status */}
       <ResponsiveParticipantList

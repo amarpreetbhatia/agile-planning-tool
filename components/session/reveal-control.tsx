@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Eye, Users, Loader2 } from 'lucide-react';
 import { useReveal } from '@/hooks/use-reveal';
+import { useRevote } from '@/hooks/use-revote';
 import { EstimateResults } from '@/components/session/estimate-results';
-import { onRoundRevealed, onEstimateFinalized } from '@/lib/socket';
+import { onRoundRevealed, onEstimateFinalized, onRevote } from '@/lib/socket';
 import { ISerializedParticipant } from '@/types';
 
 interface Vote {
@@ -51,6 +52,7 @@ export function RevealControl({
   const [revealedResults, setRevealedResults] = useState<EstimateResultsData | null>(null);
   const [isFinalized, setIsFinalized] = useState(false);
   const [finalEstimate, setFinalEstimate] = useState<number | undefined>(undefined);
+  const [currentRound, setCurrentRound] = useState(1);
   
   const { isRevealing, revealEstimates } = useReveal({
     sessionId,
@@ -59,11 +61,22 @@ export function RevealControl({
     },
   });
 
+  const { isRevoting, initiateRevote } = useRevote({
+    sessionId,
+    onRevoteSuccess: (roundNumber) => {
+      setCurrentRound(roundNumber);
+      setRevealedResults(null);
+      setIsFinalized(false);
+      setFinalEstimate(undefined);
+    },
+  });
+
   // Reset revealed results and finalization when story changes
   useEffect(() => {
     setRevealedResults(null);
     setIsFinalized(false);
     setFinalEstimate(undefined);
+    setCurrentRound(1);
   }, [currentStory?.id]);
 
   // Listen for reveal events from Socket.IO
@@ -91,9 +104,31 @@ export function RevealControl({
     };
   }, []);
 
+  // Listen for re-vote events from Socket.IO
+  useEffect(() => {
+    const unsubscribe = onRevote((data) => {
+      setCurrentRound(data.roundNumber);
+      setRevealedResults(null);
+      setIsFinalized(false);
+      setFinalEstimate(undefined);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const handleFinalized = () => {
     // Refresh the page or update state as needed
     // The socket event will handle updating the UI
+  };
+
+  const handleRevote = async () => {
+    try {
+      await initiateRevote();
+    } catch (error) {
+      console.error('Failed to initiate re-vote:', error);
+    }
   };
 
   if (!currentStory) {
@@ -104,6 +139,7 @@ export function RevealControl({
   const totalParticipants = participants.filter((p) => p.isOnline).length;
   const allVoted = totalParticipants > 0 && votedCount === totalParticipants;
   const canReveal = isHost && votedCount > 0 && !revealedResults;
+  const canRevote = isHost && !!revealedResults && !isFinalized && currentRound < 3;
 
   // If results are revealed, show them
   if (revealedResults && revealedResults.storyId === currentStory.id) {
@@ -120,6 +156,10 @@ export function RevealControl({
           isFinalized={isFinalized}
           finalEstimate={finalEstimate}
           onFinalized={handleFinalized}
+          currentRound={currentRound}
+          canRevote={canRevote}
+          onRevote={handleRevote}
+          isRevoting={isRevoting}
         />
       </div>
     );
@@ -137,9 +177,14 @@ export function RevealControl({
               <Users className="h-5 w-5 text-muted-foreground" />
               <CardTitle className="text-lg">Voting Progress</CardTitle>
             </div>
-            <Badge variant={allVoted ? 'default' : 'secondary'}>
-              {votedCount} / {totalParticipants}
-            </Badge>
+            <div className="flex items-center gap-2">
+              {currentRound > 1 && (
+                <Badge variant="outline">Round {currentRound}</Badge>
+              )}
+              <Badge variant={allVoted ? 'default' : 'secondary'}>
+                {votedCount} / {totalParticipants}
+              </Badge>
+            </div>
           </div>
           <CardDescription>
             {allVoted
@@ -198,9 +243,14 @@ export function RevealControl({
             <Users className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-lg">Voting Progress</CardTitle>
           </div>
-          <Badge variant={allVoted ? 'default' : 'secondary'}>
-            {votedCount} / {totalParticipants}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {currentRound > 1 && (
+              <Badge variant="outline">Round {currentRound}</Badge>
+            )}
+            <Badge variant={allVoted ? 'default' : 'secondary'}>
+              {votedCount} / {totalParticipants}
+            </Badge>
+          </div>
         </div>
         <CardDescription>
           {allVoted

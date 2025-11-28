@@ -492,6 +492,7 @@
 
 
 
+
   - Add comments array to Story schema
   - Create story comment API routes (POST /api/sessions/[sessionId]/stories/[storyId]/comments, GET /api/sessions/[sessionId]/stories/[storyId]/comments)
   - Store comment with userId, username, text, timestamp

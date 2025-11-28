@@ -5,6 +5,7 @@ import { Inbox } from 'lucide-react';
 interface Session {
   sessionId: string;
   name: string;
+  projectName?: string;
   status: 'active' | 'archived';
   participantCount: number;
   participants: Array<{
@@ -47,6 +48,7 @@ export default function SessionList({ sessions }: SessionListProps) {
             key={session.sessionId}
             sessionId={session.sessionId}
             name={session.name}
+            projectName={session.projectName}
             status={session.status}
             participantCount={session.participantCount}
             participants={session.participants}

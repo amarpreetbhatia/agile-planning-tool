@@ -3,7 +3,9 @@ import { auth } from '@/lib/auth';
 import connectDB from '@/lib/db';
 import Session from '@/models/Session';
 import User from '@/models/User';
+import Project from '@/models/Project';
 import { nanoid } from 'nanoid';
+import { checkPermission } from '@/lib/permissions';
 
 // POST /api/sessions - Create a new session
 export async function POST(request: NextRequest) {
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { name } = body;
+    const { name, projectId } = body;
 
     // Validate input
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -36,6 +38,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!projectId || typeof projectId !== 'string') {
+      return NextResponse.json(
+        { error: 'Project ID is required' },
+        { status: 400 }
+      );
+    }
+
     // Connect to database
     await connectDB();
 
@@ -48,15 +57,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify project exists and user has permission to create sessions
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return NextResponse.json(
+        { error: 'Project not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if user has permission to create sessions (must be member, admin, or owner)
+    const permissionCheck = checkPermission(project, user._id.toString(), 'member');
+    if (!permissionCheck.hasPermission) {
+      return NextResponse.json(
+        { error: 'You do not have permission to create sessions in this project' },
+        { status: 403 }
+      );
+    }
+
     // Generate unique session ID (8 characters, URL-safe)
     const sessionId = nanoid(8);
+
+    // Apply project settings to session
+    const votingMode = project.settings?.defaultVotingMode || 'anonymous';
 
     // Create the session with host as first participant
     const newSession = await Session.create({
       sessionId,
+      projectId: project._id,
       hostId: user._id,
       name: name.trim(),
       status: 'active',
+      votingMode,
       participants: [
         {
           userId: user._id,
@@ -116,24 +148,41 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || 'active';
+    const projectIdFilter = searchParams.get('projectId');
 
-    // Find sessions where user is host or participant
-    const sessions = await Session.find({
-      $or: [
-        { hostId: user._id },
-        { 'participants.userId': user._id },
-      ],
+    // Get user's projects to filter sessions
+    const userProjects = await Project.find({
+      'members.userId': user._id,
+    }).select('_id');
+
+    const projectIds = userProjects.map((p) => p._id);
+
+    // Build query
+    const query: any = {
+      projectId: { $in: projectIds },
       status,
-    })
+    };
+
+    // Add project filter if specified
+    if (projectIdFilter) {
+      query.projectId = projectIdFilter;
+    }
+
+    // Find sessions from user's projects
+    const sessions = await Session.find(query)
+      .populate('projectId', 'name projectId')
       .sort({ updatedAt: -1 })
       .lean();
 
     // Transform sessions for response
-    const transformedSessions = sessions.map((s) => ({
+    const transformedSessions = sessions.map((s: any) => ({
       sessionId: s.sessionId,
       name: s.name,
+      projectId: s.projectId?._id?.toString(),
+      projectName: s.projectId?.name,
       hostId: s.hostId.toString(),
       status: s.status,
+      votingMode: s.votingMode,
       participantCount: s.participants.length,
       participants: s.participants,
       currentStory: s.currentStory,

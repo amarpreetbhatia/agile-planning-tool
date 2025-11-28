@@ -1,21 +1,78 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Settings, Users, Plus, Calendar } from 'lucide-react';
+import { Settings, Users, Plus, Calendar, Loader2 } from 'lucide-react';
 import { IProject, ProjectRole } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import SessionCard from '@/components/session/session-card';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProjectDashboardProps {
   project: IProject;
   userRole: ProjectRole;
 }
 
+interface Session {
+  sessionId: string;
+  name: string;
+  projectName?: string;
+  hostId: string;
+  status: 'active' | 'archived';
+  participantCount: number;
+  participants: Array<{
+    username: string;
+    avatarUrl: string;
+    isOnline: boolean;
+  }>;
+  currentStory?: {
+    title: string;
+  };
+  updatedAt: string;
+}
+
 export default function ProjectDashboard({ project, userRole }: ProjectDashboardProps) {
   const router = useRouter();
+  const { toast } = useToast();
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [isLoadingSessions, setIsLoadingSessions] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+
+  // Fetch sessions for this project
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch(`/api/sessions?projectId=${project._id}&status=active`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch sessions');
+        }
+        const data = await response.json();
+        setSessions(data.sessions || []);
+        
+        // Get current user ID from session
+        const sessionResponse = await fetch('/api/auth/session');
+        if (sessionResponse.ok) {
+          const sessionData = await sessionResponse.json();
+          setCurrentUserId(sessionData?.user?.id || '');
+        }
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load sessions',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsLoadingSessions(false);
+      }
+    };
+
+    fetchSessions();
+  }, [project._id, toast]);
 
   const getRoleBadgeVariant = (role: ProjectRole) => {
     switch (role) {
@@ -167,10 +224,33 @@ export default function ProjectDashboard({ project, userRole }: ProjectDashboard
           <CardDescription>Planning sessions for this project</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No sessions yet</p>
-            <p className="text-sm mt-1">Create your first session to get started</p>
-          </div>
+          {isLoadingSessions ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>No sessions yet</p>
+              <p className="text-sm mt-1">Create your first session to get started</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {sessions.map((session) => (
+                <SessionCard
+                  key={session.sessionId}
+                  sessionId={session.sessionId}
+                  name={session.name}
+                  projectName={session.projectName}
+                  status={session.status}
+                  participantCount={session.participantCount}
+                  participants={session.participants}
+                  currentStory={session.currentStory}
+                  updatedAt={new Date(session.updatedAt)}
+                  isHost={session.hostId === currentUserId}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

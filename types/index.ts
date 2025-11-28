@@ -61,9 +61,11 @@ export interface IGitHubIntegration {
 export interface ISession {
   _id: ObjectId;
   sessionId: string; // Unique shareable ID
+  projectId: ObjectId; // Reference to Project (Phase 2)
   hostId: ObjectId; // Reference to User
   name: string;
   status: 'active' | 'archived';
+  votingMode?: 'anonymous' | 'open'; // Phase 2
   participants: IParticipant[];
   currentStory?: IStory;
   stories: IStory[];

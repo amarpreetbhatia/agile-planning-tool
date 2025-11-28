@@ -437,7 +437,12 @@
   - Update project list after acceptance
   - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-- [ ] 31. Update session creation to use projects
+- [x] 31. Update session creation to use projects
+
+
+
+
+
   - Add projectId field to Session schema
   - Add project reference and validation
   - Update session creation to require project selection

@@ -88,6 +88,11 @@ const SessionSchema = new Schema<ISession>(
       required: true,
       unique: true,
     },
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Project',
+      required: true,
+    },
     hostId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -101,6 +106,11 @@ const SessionSchema = new Schema<ISession>(
       type: String,
       enum: ['active', 'archived'],
       default: 'active',
+    },
+    votingMode: {
+      type: String,
+      enum: ['anonymous', 'open'],
+      required: false,
     },
     participants: {
       type: [ParticipantSchema],
@@ -127,6 +137,7 @@ const SessionSchema = new Schema<ISession>(
 // Create indexes for performance
 SessionSchema.index({ sessionId: 1 });
 SessionSchema.index({ hostId: 1 });
+SessionSchema.index({ projectId: 1 });
 
 const Session: Model<ISession> =
   mongoose.models.Session || mongoose.model<ISession>('Session', SessionSchema);

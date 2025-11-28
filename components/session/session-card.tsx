@@ -6,12 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Users, Clock, ArrowRight } from 'lucide-react';
+import { Users, Clock, ArrowRight, FolderKanban } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface SessionCardProps {
   sessionId: string;
   name: string;
+  projectName?: string;
   status: 'active' | 'archived';
   participantCount: number;
   participants: Array<{
@@ -29,6 +30,7 @@ interface SessionCardProps {
 export default function SessionCard({
   sessionId,
   name,
+  projectName,
   status,
   participantCount,
   participants,
@@ -52,9 +54,17 @@ export default function SessionCard({
           <div className="flex items-start justify-between">
             <div className="space-y-1">
               <CardTitle className="line-clamp-1">{name}</CardTitle>
-              <CardDescription className="flex items-center gap-2">
-                <Clock className="h-3 w-3" />
-                {formatDistanceToNow(new Date(updatedAt), { addSuffix: true })}
+              <CardDescription className="space-y-1">
+                {projectName && (
+                  <div className="flex items-center gap-2">
+                    <FolderKanban className="h-3 w-3" />
+                    <span className="line-clamp-1">{projectName}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3 w-3" />
+                  {formatDistanceToNow(new Date(updatedAt), { addSuffix: true })}
+                </div>
               </CardDescription>
             </div>
             <Badge variant={statusColor}>{status}</Badge>

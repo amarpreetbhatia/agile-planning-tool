@@ -16,10 +16,16 @@ function sanitizeMessage(message: string): string {
     .replace(/\//g, '&#x2F;');
 }
 
+interface RouteContext {
+  params: Promise<{
+    sessionId: string;
+  }>;
+}
+
 // POST /api/sessions/[sessionId]/messages - Send a chat message
 export async function POST(
   req: NextRequest,
-  { params }: { params: { sessionId: string } }
+  context: RouteContext
 ) {
   try {
     const session = await auth();
@@ -37,7 +43,7 @@ export async function POST(
       );
     }
 
-    const { sessionId } = params;
+    const { sessionId } = await context.params;
     const body = await req.json();
     const { message } = body;
 
@@ -198,7 +204,7 @@ export async function POST(
 // GET /api/sessions/[sessionId]/messages - Get chat history
 export async function GET(
   req: NextRequest,
-  { params }: { params: { sessionId: string } }
+  context: RouteContext
 ) {
   try {
     const session = await auth();
@@ -216,7 +222,7 @@ export async function GET(
       );
     }
 
-    const { sessionId } = params;
+    const { sessionId } = await context.params;
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const before = searchParams.get('before'); // Cursor for pagination

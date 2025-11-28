@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { onVoteCast } from '@/lib/socket';
-import { IParticipant } from '@/types';
+import { ISerializedParticipant } from '@/types';
 import { RevealControl } from '@/components/session/reveal-control';
 import { ResponsiveParticipantList } from '@/components/session/responsive-participant-list';
 
 interface VotingAndRevealProps {
-  participants: IParticipant[];
+  participants: ISerializedParticipant[];
   currentStory?: {
     id: string;
     title: string;

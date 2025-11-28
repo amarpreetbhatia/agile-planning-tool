@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Circle, Users } from 'lucide-react';
-import { IParticipant } from '@/types';
+import { ISerializedParticipant } from '@/types';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResponsiveParticipantListProps {
-  participants: IParticipant[];
+  participants: ISerializedParticipant[];
   voteStatus: { [userId: string]: boolean };
   votedCount: number;
   totalParticipants: number;

@@ -16,6 +16,11 @@ const VoteSchema = new Schema<IVote>(
       type: Number,
       required: true,
     },
+    comment: {
+      type: String,
+      required: false,
+      maxlength: 200, // Character limit for vote comments
+    },
     votedAt: {
       type: Date,
       default: Date.now,
@@ -30,7 +35,6 @@ const EstimateSchema = new Schema<IEstimate>(
       type: Schema.Types.ObjectId,
       ref: 'Session',
       required: true,
-      index: true,
     },
     storyId: {
       type: String,
@@ -62,8 +66,7 @@ const EstimateSchema = new Schema<IEstimate>(
   }
 );
 
-// Create indexes for performance
-EstimateSchema.index({ sessionId: 1 });
+// Create indexes for performance (removed duplicate sessionId index)
 EstimateSchema.index({ sessionId: 1, roundNumber: 1 });
 
 const Estimate: Model<IEstimate> =

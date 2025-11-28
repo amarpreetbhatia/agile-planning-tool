@@ -154,7 +154,13 @@ export function disconnectSocket() {
  */
 export function joinSession(sessionId: string) {
   if (!socket?.connected) {
-    throw new Error('Socket not connected');
+    console.warn('Socket not connected, waiting for connection...');
+    // Wait for connection and retry
+    socket?.once('connect', () => {
+      console.log('Socket connected, joining session:', sessionId);
+      socket?.emit('session:join', sessionId);
+    });
+    return;
   }
   socket.emit('session:join', sessionId);
 }
@@ -164,7 +170,8 @@ export function joinSession(sessionId: string) {
  */
 export function leaveSession(sessionId: string) {
   if (!socket?.connected) {
-    throw new Error('Socket not connected');
+    console.warn('Socket not connected, cannot leave session');
+    return;
   }
   socket.emit('session:leave', sessionId);
 }
@@ -297,7 +304,8 @@ export function isConnected(): boolean {
  */
 export function sendTypingIndicator(sessionId: string, isTyping: boolean) {
   if (!socket?.connected) {
-    throw new Error('Socket not connected');
+    console.warn('Socket not connected, cannot send typing indicator');
+    return;
   }
   socket.emit('chat:typing', sessionId, isTyping);
 }

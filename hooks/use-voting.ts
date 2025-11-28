@@ -46,7 +46,7 @@ export function useVoting({
   }, [currentStoryId]);
 
   const castVote = useCallback(
-    async (value: CardValue) => {
+    async (value: CardValue, comment?: string) => {
       if (!currentStoryId) {
         toast({
           title: 'No Active Story',
@@ -64,7 +64,7 @@ export function useVoting({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ value }),
+          body: JSON.stringify({ value, comment }),
         });
 
         if (!response.ok) {
@@ -101,9 +101,9 @@ export function useVoting({
   );
 
   const changeVote = useCallback(
-    async (value: CardValue) => {
+    async (value: CardValue, comment?: string) => {
       // Same as castVote - the API handles both cases
-      await castVote(value);
+      await castVote(value, comment);
     },
     [castVote]
   );

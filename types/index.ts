@@ -42,6 +42,15 @@ export interface IParticipant {
   isOnline: boolean;
 }
 
+// Serialized version for client components
+export interface ISerializedParticipant {
+  userId: string;
+  username: string;
+  avatarUrl: string;
+  joinedAt: Date;
+  isOnline: boolean;
+}
+
 export interface IStoryComment {
   id: string;
   userId: ObjectId;
@@ -90,6 +99,7 @@ export interface IVote {
   userId: ObjectId;
   username: string;
   value: number;
+  comment?: string; // Optional rationale for the vote
   votedAt: Date;
 }
 

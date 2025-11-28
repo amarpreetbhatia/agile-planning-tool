@@ -16,7 +16,7 @@ import { Plus, Search, Filter } from 'lucide-react';
 import ProjectCard from './project-card';
 import { UserInvitations } from './user-invitations';
 import { IProject, ProjectRole } from '@/types';
-import { getUserRole } from '@/lib/permissions';
+import { getUserRole } from '@/lib/permissions-client';
 import { useSession } from 'next-auth/react';
 
 export default function ProjectsList() {

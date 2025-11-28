@@ -8,7 +8,7 @@ import { Eye, Users, Loader2 } from 'lucide-react';
 import { useReveal } from '@/hooks/use-reveal';
 import { EstimateResults } from '@/components/session/estimate-results';
 import { onRoundRevealed, onEstimateFinalized } from '@/lib/socket';
-import { IParticipant } from '@/types';
+import { ISerializedParticipant } from '@/types';
 
 interface Vote {
   userId: string;
@@ -33,7 +33,7 @@ interface RevealControlProps {
     id: string;
     title: string;
   } | null;
-  participants: IParticipant[];
+  participants: ISerializedParticipant[];
   voteStatus: Record<string, boolean>;
   className?: string;
 }

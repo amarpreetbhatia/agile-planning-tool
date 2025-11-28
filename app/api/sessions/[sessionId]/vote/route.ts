@@ -32,7 +32,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const { sessionId } = await context.params;
     const body = await request.json();
-    const { value } = body;
+    const { value, comment } = body;
 
     // Validate card value
     if (typeof value !== 'number' || !VALID_CARD_VALUES.includes(value)) {
@@ -40,6 +40,22 @@ export async function POST(request: NextRequest, context: RouteContext) {
         { error: 'Invalid card value' },
         { status: 400 }
       );
+    }
+
+    // Validate comment if provided
+    if (comment !== undefined && comment !== null) {
+      if (typeof comment !== 'string') {
+        return NextResponse.json(
+          { error: 'Comment must be a string' },
+          { status: 400 }
+        );
+      }
+      if (comment.length > 200) {
+        return NextResponse.json(
+          { error: 'Comment must be 200 characters or less' },
+          { status: 400 }
+        );
+      }
     }
 
     await connectDB();
@@ -131,6 +147,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     if (existingVoteIndex !== -1) {
       // Update existing vote
       estimate.votes[existingVoteIndex].value = value;
+      estimate.votes[existingVoteIndex].comment = comment || undefined;
       estimate.votes[existingVoteIndex].votedAt = new Date();
     } else {
       // Add new vote
@@ -138,6 +155,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         userId: user._id,
         username: user.username,
         value,
+        comment: comment || undefined,
         votedAt: new Date(),
       });
     }

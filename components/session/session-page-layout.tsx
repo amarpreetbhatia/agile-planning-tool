@@ -12,7 +12,7 @@ import { useIsMobile, useIsTablet } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Users, BookOpen } from 'lucide-react';
-import { IParticipant, IStory } from '@/types';
+import { ISerializedParticipant, IStory } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface SessionPageLayoutProps {
@@ -20,7 +20,7 @@ interface SessionPageLayoutProps {
   sessionId: string;
   status: 'active' | 'archived';
   isHost: boolean;
-  participants: IParticipant[];
+  participants: ISerializedParticipant[];
   currentStory?: IStory | null;
   currentUserId: string;
   storyManager: ReactNode;

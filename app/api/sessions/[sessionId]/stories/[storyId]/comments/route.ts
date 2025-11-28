@@ -7,13 +7,20 @@ import { createGitHubService, GitHubAPIError } from '@/lib/github';
 import { nanoid } from 'nanoid';
 import mongoose from 'mongoose';
 
+interface RouteContext {
+  params: Promise<{
+    sessionId: string;
+    storyId: string;
+  }>;
+}
+
 /**
  * POST /api/sessions/[sessionId]/stories/[storyId]/comments
  * Add a comment to a story
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { sessionId: string; storyId: string } }
+  context: RouteContext
 ) {
   try {
     const session = await auth();
@@ -25,7 +32,7 @@ export async function POST(
       );
     }
 
-    const { sessionId, storyId } = params;
+    const { sessionId, storyId } = await context.params;
     const body = await request.json();
     const { comment } = body;
 

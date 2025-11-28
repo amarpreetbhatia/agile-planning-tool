@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { IParticipant } from '@/types';
+import { ISerializedParticipant } from '@/types';
 import { Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getSocket } from '@/lib/socket';
 
 interface RealTimeParticipantListProps {
-  initialParticipants: IParticipant[];
+  initialParticipants: ISerializedParticipant[];
   hostId: string;
   sessionId: string;
 }
@@ -21,7 +21,7 @@ export function RealTimeParticipantList({
   hostId,
   sessionId,
 }: RealTimeParticipantListProps) {
-  const [participants, setParticipants] = useState<IParticipant[]>(initialParticipants);
+  const [participants, setParticipants] = useState<ISerializedParticipant[]>(initialParticipants);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -29,11 +29,11 @@ export function RealTimeParticipantList({
     if (!socket) return;
 
     // Handle participant joined
-    const handleParticipantJoined = (participant: IParticipant) => {
+    const handleParticipantJoined = (participant: ISerializedParticipant) => {
       setParticipants((prev) => {
         // Check if participant already exists
         const exists = prev.some(
-          (p) => p.userId.toString() === participant.userId.toString()
+          (p) => p.userId === participant.userId
         );
         
         if (exists) {

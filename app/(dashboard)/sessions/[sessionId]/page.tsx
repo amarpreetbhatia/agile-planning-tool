@@ -53,6 +53,15 @@ export default async function SessionPage({ params }: SessionPageProps) {
 
   const isHost = sessionData.hostId.toString() === user._id.toString();
 
+  // Serialize participants to plain objects
+  const serializedParticipants = sessionData.participants.map((p) => ({
+    userId: p.userId.toString(),
+    username: p.username,
+    avatarUrl: p.avatarUrl,
+    joinedAt: p.joinedAt,
+    isOnline: p.isOnline,
+  }));
+
   return (
     <>
       <SessionJoinHandler sessionId={sessionId} isParticipant={isParticipant} />
@@ -69,7 +78,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
         sessionId={sessionData.sessionId}
         status={sessionData.status}
         isHost={isHost}
-        participants={sessionData.participants}
+        participants={serializedParticipants}
         currentStory={sessionData.currentStory}
         currentUserId={user._id.toString()}
         githubIntegration={

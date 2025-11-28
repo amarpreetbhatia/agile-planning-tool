@@ -7,10 +7,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Circle, Users } from 'lucide-react';
 import { getSocket, onVoteCast } from '@/lib/socket';
-import { IParticipant } from '@/types';
+import { ISerializedParticipant } from '@/types';
 
 interface VotingStatusProps {
-  participants: IParticipant[];
+  participants: ISerializedParticipant[];
   currentStory?: {
     id: string;
     title: string;

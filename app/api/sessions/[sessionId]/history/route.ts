@@ -8,8 +8,9 @@ import { handleApiError } from '@/lib/api-error-handler';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
+  const { sessionId } = await params;
   try {
     const session = await auth();
 
@@ -21,8 +22,6 @@ export async function GET(
     }
 
     await connectDB();
-
-    const { sessionId } = params;
 
     // Find the session
     const sessionDoc = await Session.findOne({ sessionId }).lean();

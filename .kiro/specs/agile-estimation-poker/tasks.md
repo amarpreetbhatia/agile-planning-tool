@@ -397,7 +397,12 @@
   - Validate permissions before project operations
   - _Requirements: 11.2, 11.6, 12.5, 13.1, 13.2, 13.3, 13.4, 13.5_
 
-- [ ] 29. Build project management UI
+- [x] 29. Build project management UI
+
+
+
+
+
   - Build project creation form with name and description
   - Add project settings configuration (card values, voting mode)
   - Implement project creation API call
@@ -413,7 +418,12 @@
   - Restrict access to owners and admins
   - _Requirements: 11.1, 11.2, 11.3, 11.5, 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 30. Implement team member management
+- [x] 30. Implement team member management
+
+
+
+
+
   - Create invitation system API (POST /api/projects/[projectId]/invitations, GET /api/projects/[projectId]/invitations, POST /api/invitations/[invitationId]/accept, POST /api/invitations/[invitationId]/decline, DELETE /api/projects/[projectId]/members/[userId])
   - Create team members list with avatars and roles
   - Add invite member dialog with GitHub username/email input

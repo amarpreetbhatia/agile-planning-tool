@@ -10,8 +10,9 @@ import { validateProjectAccess } from '@/lib/permissions';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
+  const { projectId } = await params;
   try {
     const session = await auth();
 
@@ -46,7 +47,7 @@ export async function GET(
     }
 
     const result = await validateProjectAccess(
-      params.projectId,
+      projectId,
       user._id,
       'member'
     );
@@ -102,8 +103,9 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
+  const { projectId } = await params;
   try {
     const session = await auth();
 
@@ -138,7 +140,7 @@ export async function PATCH(
     }
 
     const result = await validateProjectAccess(
-      params.projectId,
+      projectId,
       user._id,
       'admin'
     );
@@ -180,7 +182,7 @@ export async function PATCH(
 
     // Update project
     const updatedProject = await Project.findOneAndUpdate(
-      { projectId: params.projectId },
+      { projectId },
       { $set: updateData },
       { new: true }
     );
@@ -211,8 +213,9 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
+  const { projectId } = await params;
   try {
     const session = await auth();
 
@@ -247,7 +250,7 @@ export async function DELETE(
     }
 
     const result = await validateProjectAccess(
-      params.projectId,
+      projectId,
       user._id,
       'owner'
     );
@@ -279,7 +282,7 @@ export async function DELETE(
     }
 
     // Delete the project
-    await Project.deleteOne({ projectId: params.projectId });
+    await Project.deleteOne({ projectId });
 
     return NextResponse.json({
       success: true,

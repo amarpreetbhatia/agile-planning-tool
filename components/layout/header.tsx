@@ -31,6 +31,12 @@ export async function Header() {
                 Dashboard
               </Link>
               <Link
+                href="/projects"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Projects
+              </Link>
+              <Link
                 href="/sessions/new"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >

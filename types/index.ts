@@ -123,6 +123,23 @@ export interface IProject {
   updatedAt: Date;
 }
 
+// Invitation Types (Phase 2)
+export interface IInvitation {
+  _id: ObjectId;
+  projectId: ObjectId; // Reference to Project
+  invitedBy: ObjectId; // Reference to User
+  invitedUser?: ObjectId; // Reference to User (if registered)
+  invitedEmail?: string; // Email if user not registered
+  invitedGithubUsername?: string; // GitHub username
+  role: 'admin' | 'member';
+  status: 'pending' | 'accepted' | 'declined' | 'expired';
+  token: string; // Unique invitation token
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  respondedAt?: Date;
+}
+
 // Permission Types
 export type ProjectRole = 'owner' | 'admin' | 'member';
 

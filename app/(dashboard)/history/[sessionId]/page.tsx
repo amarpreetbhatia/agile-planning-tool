@@ -5,7 +5,7 @@ import SessionHistoryDetail from '@/components/session/session-history-detail';
 export default async function SessionHistoryDetailPage({
   params,
 }: {
-  params: { sessionId: string };
+  params: Promise<{ sessionId: string }>;
 }) {
   const session = await auth();
 
@@ -13,9 +13,11 @@ export default async function SessionHistoryDetailPage({
     redirect('/login');
   }
 
+  const { sessionId } = await params;
+
   return (
     <main className="container py-8">
-      <SessionHistoryDetail sessionId={params.sessionId} />
+      <SessionHistoryDetail sessionId={sessionId} />
     </main>
   );
 }

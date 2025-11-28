@@ -526,7 +526,12 @@
 
 ## Phase 2C: Enhanced Voting UX (Priority: P0)
 
-- [ ] 35. Implement voting status indicators
+- [x] 35. Implement voting status indicators
+
+
+
+
+
   - Build participant list with voting status
   - Show checkmark for voted participants
   - Show pending indicator for non-voted participants
@@ -541,7 +546,12 @@
   - Allow users to dismiss reminder
   - _Requirements: 26.1, 26.2, 26.3, 26.4, 26.5_
 
-- [ ] 36. Implement voting modes
+- [x] 36. Implement voting modes
+
+
+
+
+
   - Add votingMode field to Session model (anonymous/open)
   - Update session creation to include voting mode
   - Apply project default voting mode

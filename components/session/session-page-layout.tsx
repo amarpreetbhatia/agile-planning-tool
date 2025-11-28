@@ -23,6 +23,7 @@ interface SessionPageLayoutProps {
   participants: ISerializedParticipant[];
   currentStory?: IStory | null;
   currentUserId: string;
+  votingMode?: 'anonymous' | 'open';
   storyManager: ReactNode;
   pokerCards: ReactNode;
   githubIntegration?: ReactNode;
@@ -38,6 +39,7 @@ export function SessionPageLayout({
   participants,
   currentStory,
   currentUserId,
+  votingMode = 'anonymous',
   storyManager,
   pokerCards,
   githubIntegration,
@@ -59,6 +61,7 @@ export function SessionPageLayout({
           participants={participants}
           currentStory={currentStory}
           currentUserId={currentUserId}
+          votingMode={votingMode}
           storyManager={storyManager}
           pokerCards={pokerCards}
           githubIntegration={githubIntegration}
@@ -81,6 +84,7 @@ export function SessionPageLayout({
           participants={participants}
           currentStory={currentStory}
           currentUserId={currentUserId}
+          votingMode={votingMode}
           storyManager={storyManager}
           pokerCards={pokerCards}
           githubIntegration={githubIntegration}
@@ -101,6 +105,7 @@ export function SessionPageLayout({
       participants={participants}
       currentStory={currentStory}
       currentUserId={currentUserId}
+      votingMode={votingMode}
       storyManager={storyManager}
       pokerCards={pokerCards}
       githubIntegration={githubIntegration}
@@ -156,6 +161,7 @@ function MobileSessionPage({
                     currentStory={currentStory}
                     sessionId={sessionId}
                     isHost={isHost}
+                    votingMode={votingMode}
                   />
                   {isHost && (
                     <EndSessionControl sessionId={sessionId} isHost={isHost} />
@@ -264,6 +270,7 @@ function TabletSessionPage({
               currentStory={currentStory}
               sessionId={sessionId}
               isHost={isHost}
+              votingMode={votingMode}
             />
           </div>
         </div>
@@ -313,6 +320,7 @@ function DesktopSessionPage({
                 currentStory={currentStory}
                 sessionId={sessionId}
                 isHost={isHost}
+                votingMode={votingMode}
               />
             </div>
           </aside>

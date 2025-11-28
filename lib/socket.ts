@@ -325,3 +325,27 @@ export function onChatTyping(callback: (userId: string, username: string, isTypi
   socket?.on('chat:typing', callback);
   return () => socket?.off('chat:typing', callback);
 }
+
+/**
+ * Subscribe to vote reminder events
+ */
+export function onVoteReminder(callback: (message: string) => void) {
+  socket?.on('vote:reminder', callback);
+  return () => socket?.off('vote:reminder', callback);
+}
+
+/**
+ * Subscribe to vote status events (includes voting mode and value for open mode)
+ */
+export function onVoteStatus(callback: (userId: string, hasVoted: boolean, votingMode: string, value?: number) => void) {
+  socket?.on('vote:status', callback);
+  return () => socket?.off('vote:status', callback);
+}
+
+/**
+ * Subscribe to voting mode changed events
+ */
+export function onVotingModeChanged(callback: (votingMode: string) => void) {
+  socket?.on('voting-mode:changed', callback);
+  return () => socket?.off('voting-mode:changed', callback);
+}

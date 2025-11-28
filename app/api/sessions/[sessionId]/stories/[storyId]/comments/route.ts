@@ -183,7 +183,7 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string; storyId: string } }
+  context: RouteContext
 ) {
   try {
     const session = await auth();
@@ -195,7 +195,7 @@ export async function GET(
       );
     }
 
-    const { sessionId, storyId } = params;
+    const { sessionId, storyId } = await context.params;
 
     await dbConnect();
 

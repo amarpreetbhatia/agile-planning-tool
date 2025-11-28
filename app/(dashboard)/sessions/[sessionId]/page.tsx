@@ -62,6 +62,9 @@ export default async function SessionPage({ params }: SessionPageProps) {
     isOnline: p.isOnline,
   }));
 
+  // Get voting mode (default to anonymous if not set)
+  const votingMode = sessionData.votingMode || 'anonymous';
+
   return (
     <>
       <SessionJoinHandler sessionId={sessionId} isParticipant={isParticipant} />
@@ -81,6 +84,7 @@ export default async function SessionPage({ params }: SessionPageProps) {
         participants={serializedParticipants}
         currentStory={sessionData.currentStory}
         currentUserId={user._id.toString()}
+        votingMode={votingMode}
         githubIntegration={
           isHost ? (
             <Card>

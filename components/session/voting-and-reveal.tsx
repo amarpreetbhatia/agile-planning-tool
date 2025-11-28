@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { onVoteCast } from '@/lib/socket';
+import { onVoteCast, onVoteStatus, onVotingModeChanged } from '@/lib/socket';
 import { ISerializedParticipant } from '@/types';
 import { RevealControl } from '@/components/session/reveal-control';
 import { ResponsiveParticipantList } from '@/components/session/responsive-participant-list';
+import { VotingModeSelector } from '@/components/session/voting-mode-selector';
 
 interface VotingAndRevealProps {
   participants: ISerializedParticipant[];
@@ -14,6 +15,7 @@ interface VotingAndRevealProps {
   } | null;
   sessionId: string;
   isHost: boolean;
+  votingMode?: 'anonymous' | 'open';
   className?: string;
 }
 
@@ -21,19 +23,27 @@ interface VoteStatus {
   [userId: string]: boolean;
 }
 
+interface VoteValues {
+  [userId: string]: number;
+}
+
 export function VotingAndReveal({
   participants,
   currentStory,
   sessionId,
   isHost,
+  votingMode: initialVotingMode = 'anonymous',
   className,
 }: VotingAndRevealProps) {
   const [voteStatus, setVoteStatus] = useState<VoteStatus>({});
+  const [voteValues, setVoteValues] = useState<VoteValues>({});
+  const [votingMode, setVotingMode] = useState<'anonymous' | 'open'>(initialVotingMode);
 
   // Fetch initial vote status
   useEffect(() => {
     if (!currentStory) {
       setVoteStatus({});
+      setVoteValues({});
       return;
     }
 
@@ -45,6 +55,12 @@ export function VotingAndReveal({
           if (data.voteStatus) {
             setVoteStatus(data.voteStatus);
           }
+          if (data.voteValues) {
+            setVoteValues(data.voteValues);
+          }
+          if (data.votingMode) {
+            setVotingMode(data.votingMode);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch voting status:', error);
@@ -55,16 +71,43 @@ export function VotingAndReveal({
   }, [sessionId, currentStory]);
 
   useEffect(() => {
-    // Subscribe to vote cast events
-    const unsubscribe = onVoteCast((userId: string, hasVoted: boolean) => {
+    // Subscribe to vote cast events (legacy)
+    const unsubscribeVoteCast = onVoteCast((userId: string, hasVoted: boolean) => {
       setVoteStatus((prev) => ({
         ...prev,
         [userId]: hasVoted,
       }));
     });
 
+    // Subscribe to vote status events (includes voting mode and value)
+    const unsubscribeVoteStatus = onVoteStatus((userId: string, hasVoted: boolean, mode: string, value?: number) => {
+      setVoteStatus((prev) => ({
+        ...prev,
+        [userId]: hasVoted,
+      }));
+      
+      // Update vote values if in open mode and value is provided
+      if (mode === 'open' && value !== undefined) {
+        setVoteValues((prev) => ({
+          ...prev,
+          [userId]: value,
+        }));
+      }
+    });
+
+    // Subscribe to voting mode changed events
+    const unsubscribeVotingMode = onVotingModeChanged((newMode: string) => {
+      setVotingMode(newMode as 'anonymous' | 'open');
+      // Clear vote values when switching to anonymous mode
+      if (newMode === 'anonymous') {
+        setVoteValues({});
+      }
+    });
+
     return () => {
-      unsubscribe();
+      unsubscribeVoteCast();
+      unsubscribeVoteStatus();
+      unsubscribeVotingMode();
     };
   }, []);
 
@@ -77,6 +120,18 @@ export function VotingAndReveal({
 
   return (
     <div className={className}>
+      {/* Voting Mode Selector (host only) */}
+      {currentStory && (
+        <div className="mb-4">
+          <VotingModeSelector
+            sessionId={sessionId}
+            currentMode={votingMode}
+            isHost={isHost}
+            onModeChanged={(newMode) => setVotingMode(newMode)}
+          />
+        </div>
+      )}
+
       {/* Reveal Control (shows results when revealed) */}
       <RevealControl
         sessionId={sessionId}
@@ -84,6 +139,7 @@ export function VotingAndReveal({
         currentStory={currentStory}
         participants={participants}
         voteStatus={voteStatus}
+        votingMode={votingMode}
         className="mb-6"
       />
 
@@ -91,6 +147,7 @@ export function VotingAndReveal({
       <ResponsiveParticipantList
         participants={participants}
         voteStatus={voteStatus}
+        voteValues={votingMode === 'open' ? voteValues : undefined}
         votedCount={votedCount}
         totalParticipants={totalParticipants}
       />

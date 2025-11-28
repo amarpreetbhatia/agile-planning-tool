@@ -35,6 +35,7 @@ interface RevealControlProps {
   } | null;
   participants: ISerializedParticipant[];
   voteStatus: Record<string, boolean>;
+  votingMode?: 'anonymous' | 'open';
   className?: string;
 }
 
@@ -44,6 +45,7 @@ export function RevealControl({
   currentStory,
   participants,
   voteStatus,
+  votingMode = 'anonymous',
   className,
 }: RevealControlProps) {
   const [revealedResults, setRevealedResults] = useState<EstimateResultsData | null>(null);
@@ -125,6 +127,8 @@ export function RevealControl({
 
   // Show reveal control for host
   if (isHost) {
+    const hasPartialVotes = votedCount > 0 && !allVoted;
+    
     return (
       <Card className={className}>
         <CardHeader>
@@ -145,12 +149,13 @@ export function RevealControl({
                 }...`}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-2">
           <Button
             onClick={revealEstimates}
             disabled={!canReveal || isRevealing}
             className="w-full"
             size="lg"
+            variant={allVoted ? 'default' : 'outline'}
           >
             {isRevealing ? (
               <>
@@ -160,7 +165,7 @@ export function RevealControl({
             ) : (
               <>
                 <Eye className="mr-2 h-4 w-4" />
-                Reveal Estimates
+                {allVoted ? 'Reveal Estimates' : 'Reveal Anyway'}
               </>
             )}
           </Button>
@@ -170,8 +175,13 @@ export function RevealControl({
             </p>
           )}
           {allVoted && (
-            <p className="text-xs text-primary text-center mt-2">
+            <p className="text-xs text-primary text-center">
               All votes are in! Click to reveal.
+            </p>
+          )}
+          {hasPartialVotes && (
+            <p className="text-xs text-muted-foreground text-center">
+              You can reveal now with partial votes, or wait for everyone.
             </p>
           )}
         </CardContent>

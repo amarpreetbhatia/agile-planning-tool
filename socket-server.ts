@@ -18,6 +18,7 @@ export interface ServerToClientEvents {
   'participant:joined': (participant: any) => void;
   'participant:left': (userId: string) => void;
   'vote:cast': (userId: string, hasVoted: boolean) => void;
+  'vote:status': (userId: string, hasVoted: boolean, votingMode: string, value?: number) => void;
   'story:selected': (story: any) => void;
   'round:revealed': (results: any) => void;
   'estimate:finalized': (value: number) => void;
@@ -26,6 +27,8 @@ export interface ServerToClientEvents {
   'chat:message': (message: any) => void;
   'chat:typing': (userId: string, username: string, isTyping: boolean) => void;
   'story:comment': (storyId: string, comment: any) => void;
+  'vote:reminder': (message: string) => void;
+  'voting-mode:changed': (votingMode: string) => void;
 }
 
 export interface SocketData {
@@ -47,6 +50,10 @@ let io: SocketIOServer<
   {},
   SocketData
 > | null = null;
+
+// Track round start times for reminder functionality
+const roundStartTimes = new Map<string, Date>();
+const reminderTimers = new Map<string, NodeJS.Timeout>();
 
 export function initSocketServer(httpServer?: HTTPServer) {
   // Check if io is already available globally (set by server.js)
@@ -207,11 +214,87 @@ function setupSocketHandlers(
       
       // Broadcast to all participants in the session
       io!.to(sessionId).emit('story:selected', story);
+      
+      // Track round start time and set up reminder
+      roundStartTimes.set(sessionId, new Date());
+      
+      // Clear any existing reminder timer for this session
+      const existingTimer = reminderTimers.get(sessionId);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+      }
+      
+      // Set up reminder timer (2 minutes)
+      const reminderTimer = setTimeout(async () => {
+        try {
+          // Check who hasn't voted yet
+          const mongoose = await import('mongoose');
+          const Session = (await import('./models/Session')).default;
+          const Estimate = (await import('./models/Estimate')).default;
+          
+          if (mongoose.default.connection.readyState === 1) {
+            const session = await Session.findOne({ sessionId });
+            if (!session || !session.currentStory) {
+              return;
+            }
+            
+            // Get current estimate
+            const estimate = await Estimate.findOne({
+              sessionId: session._id,
+              storyId: session.currentStory.id,
+              revealedAt: null,
+            });
+            
+            if (!estimate) {
+              return;
+            }
+            
+            // Get list of users who voted
+            const votedUserIds = new Set(estimate.votes.map((v: any) => v.userId.toString()));
+            
+            // Find online participants who haven't voted
+            const nonVoters = session.participants.filter(
+              (p: any) => p.isOnline && !votedUserIds.has(p.userId.toString())
+            );
+            
+            // Send reminder to non-voters
+            if (nonVoters.length > 0) {
+              const socketsInRoom = io!.sockets.adapter.rooms.get(sessionId);
+              if (socketsInRoom) {
+                socketsInRoom.forEach((socketId) => {
+                  const targetSocket = io!.sockets.sockets.get(socketId);
+                  if (targetSocket && targetSocket.data.userId) {
+                    const isNonVoter = nonVoters.some(
+                      (nv: any) => nv.userId.toString() === targetSocket.data.userId
+                    );
+                    if (isNonVoter) {
+                      targetSocket.emit('vote:reminder', 'Don\'t forget to cast your vote! The team is waiting.');
+                    }
+                  }
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error sending vote reminders:', error);
+        }
+      }, 2 * 60 * 1000); // 2 minutes
+      
+      reminderTimers.set(sessionId, reminderTimer);
     });
 
     // Round reveal handler (host only - validation should be done in API)
     socket.on('round:reveal', (sessionId: string) => {
       console.log(`Round revealed in session ${sessionId}`);
+      
+      // Clear reminder timer when round is revealed
+      const reminderTimer = reminderTimers.get(sessionId);
+      if (reminderTimer) {
+        clearTimeout(reminderTimer);
+        reminderTimers.delete(sessionId);
+      }
+      roundStartTimes.delete(sessionId);
+      
       // Results will be broadcast from API after calculation
     });
 
@@ -226,6 +309,14 @@ function setupSocketHandlers(
     // Session end handler (host only - validation should be done in API)
     socket.on('session:end', (sessionId: string) => {
       console.log(`Session ended: ${sessionId}`);
+      
+      // Clear reminder timer
+      const reminderTimer = reminderTimers.get(sessionId);
+      if (reminderTimer) {
+        clearTimeout(reminderTimer);
+        reminderTimers.delete(sessionId);
+      }
+      roundStartTimes.delete(sessionId);
       
       // Broadcast to all participants
       io!.to(sessionId).emit('session:ended');

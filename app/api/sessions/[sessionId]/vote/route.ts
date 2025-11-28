@@ -165,6 +165,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Broadcast vote status to other participants via Socket.IO
     try {
       const io = getSocketServer();
+      
+      // In open mode, broadcast the actual vote value
+      // In anonymous mode, only broadcast that the user has voted
+      if (sessionData.votingMode === 'open') {
+        io.to(sessionId).emit('vote:status', user._id.toString(), true, 'open', value);
+      } else {
+        io.to(sessionId).emit('vote:status', user._id.toString(), true, 'anonymous');
+      }
+      
+      // Also emit the legacy vote:cast event for backward compatibility
       io.to(sessionId).emit('vote:cast', user._id.toString(), true);
     } catch (socketError) {
       console.error('Failed to broadcast vote status:', socketError);

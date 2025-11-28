@@ -12,6 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 interface ResponsiveParticipantListProps {
   participants: ISerializedParticipant[];
   voteStatus: { [userId: string]: boolean };
+  voteValues?: { [userId: string]: number };
   votedCount: number;
   totalParticipants: number;
   compact?: boolean;
@@ -21,12 +22,20 @@ interface ResponsiveParticipantListProps {
 export function ResponsiveParticipantList({
   participants,
   voteStatus,
+  voteValues,
   votedCount,
   totalParticipants,
   compact = false,
   className,
 }: ResponsiveParticipantListProps) {
   const isMobile = useIsMobile();
+  
+  // Helper to format vote value for display
+  const formatVoteValue = (value: number): string => {
+    if (value === -1) return '?';
+    if (value === -2) return '☕';
+    return value.toString();
+  };
 
   // Mobile: More compact layout
   if (isMobile || compact) {
@@ -75,7 +84,11 @@ export function ResponsiveParticipantList({
                           {participant.username}
                         </span>
                       </div>
-                      {hasVoted ? (
+                      {voteValues && hasVoted && voteValues[participant.userId.toString()] !== undefined ? (
+                        <Badge variant="default" className="shrink-0">
+                          {formatVoteValue(voteValues[participant.userId.toString()])}
+                        </Badge>
+                      ) : hasVoted ? (
                         <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
                       ) : (
                         <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -134,7 +147,11 @@ export function ResponsiveParticipantList({
                       </Avatar>
                       <span className="text-sm font-medium">{participant.username}</span>
                     </div>
-                    {hasVoted ? (
+                    {voteValues && hasVoted && voteValues[participant.userId.toString()] !== undefined ? (
+                      <Badge variant="default">
+                        {formatVoteValue(voteValues[participant.userId.toString()])}
+                      </Badge>
+                    ) : hasVoted ? (
                       <CheckCircle2 className="h-5 w-5 text-primary" />
                     ) : (
                       <Circle className="h-5 w-5 text-muted-foreground" />

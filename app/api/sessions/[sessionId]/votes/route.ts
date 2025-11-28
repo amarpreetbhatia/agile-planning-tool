@@ -84,10 +84,13 @@ export async function GET(request: NextRequest, context: RouteContext) {
       });
     }
 
-    // Build vote status map (userId -> hasVoted)
-    const voteStatus: { [key: string]: boolean } = {};
+    // Build vote status map (userId -> hasVoted or vote value for open mode)
+    const voteStatus: { [key: string]: boolean | number } = {};
+    const voteValues: { [key: string]: number } = {};
+    
     estimate.votes.forEach((vote) => {
       voteStatus[vote.userId.toString()] = true;
+      voteValues[vote.userId.toString()] = vote.value;
     });
 
     // Get current user's vote
@@ -95,9 +98,14 @@ export async function GET(request: NextRequest, context: RouteContext) {
       (v) => v.userId.toString() === user._id.toString()
     );
 
+    // Get voting mode
+    const votingMode = sessionData.votingMode || 'anonymous';
+
     return NextResponse.json({
       hasActiveRound: true,
       voteStatus,
+      voteValues: votingMode === 'open' ? voteValues : undefined,
+      votingMode,
       currentUserVote: currentUserVote
         ? {
             value: currentUserVote.value,

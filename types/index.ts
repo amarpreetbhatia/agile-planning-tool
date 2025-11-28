@@ -92,6 +92,46 @@ export interface IEstimate {
   createdAt: Date;
 }
 
+// Project Types (Phase 2)
+export interface IProjectMember {
+  userId: ObjectId;
+  username: string;
+  avatarUrl: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedAt: Date;
+}
+
+export interface IProjectSettings {
+  defaultCardValues: 'fibonacci' | 'tshirt' | 'custom';
+  customCardValues?: number[];
+  defaultVotingMode: 'anonymous' | 'open';
+  githubIntegration?: {
+    defaultRepo?: string;
+    defaultProject?: number;
+  };
+}
+
+export interface IProject {
+  _id: ObjectId;
+  projectId: string; // Unique project identifier
+  name: string;
+  description: string;
+  ownerId: ObjectId; // Reference to User (creator)
+  members: IProjectMember[];
+  settings: IProjectSettings;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Permission Types
+export type ProjectRole = 'owner' | 'admin' | 'member';
+
+export interface IPermissionCheck {
+  hasPermission: boolean;
+  role?: ProjectRole;
+  message?: string;
+}
+
 // GitHub Integration Types (re-exported from lib/github.ts for convenience)
 export type {
   IRepository,

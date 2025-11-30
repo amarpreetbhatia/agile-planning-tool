@@ -34,7 +34,7 @@ export function StoryManager({
     const socket = getSocket();
     if (!socket) return;
 
-    const unsubscribe = onStorySelected((story: IStory | null) => {
+    const unsubscribeStorySelected = onStorySelected((story: IStory | null) => {
       setCurrentStory(story);
       
       if (story) {
@@ -50,8 +50,34 @@ export function StoryManager({
       }
     });
 
+    // Listen for story reordering
+    const handleStoriesReordered = (data: { stories: IStory[] }) => {
+      setStories(data.stories);
+    };
+
+    // Listen for story status updates
+    const handleStoryStatusUpdated = (data: { storyId: string; status: string }) => {
+      setStories((prev) =>
+        prev.map((s) =>
+          s.id === data.storyId ? { ...s, status: data.status as any } : s
+        )
+      );
+    };
+
+    // Listen for bulk updates
+    const handleStoriesBulkUpdated = (data: { stories: IStory[] }) => {
+      setStories(data.stories);
+    };
+
+    socket.on('stories:reordered', handleStoriesReordered);
+    socket.on('story:status-updated', handleStoryStatusUpdated);
+    socket.on('stories:bulk-updated', handleStoriesBulkUpdated);
+
     return () => {
-      unsubscribe();
+      unsubscribeStorySelected();
+      socket.off('stories:reordered', handleStoriesReordered);
+      socket.off('story:status-updated', handleStoryStatusUpdated);
+      socket.off('stories:bulk-updated', handleStoriesBulkUpdated);
     };
   }, [toast]);
 
@@ -166,6 +192,10 @@ export function StoryManager({
     }
   };
 
+  const handleStoriesUpdate = (updatedStories: IStory[]) => {
+    setStories(updatedStories);
+  };
+
   return (
     <div className="space-y-6">
       <StoryDisplay
@@ -175,11 +205,13 @@ export function StoryManager({
       />
       
       <StoryBacklog
+        sessionId={sessionId}
         stories={stories}
         currentStoryId={currentStory?.id}
         isHost={isHost}
         onStorySelect={handleStorySelect}
         onStoryCreate={handleStoryCreate}
+        onStoriesUpdate={handleStoriesUpdate}
       />
     </div>
   );

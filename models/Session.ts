@@ -94,6 +94,23 @@ const StorySchema = new Schema<IStory>(
       type: [StoryCommentSchema],
       default: [],
     },
+    status: {
+      type: String,
+      enum: ['ready', 'not-ready', 'estimated'],
+      default: 'ready',
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+    labels: {
+      type: [String],
+      default: [],
+    },
+    assignee: {
+      type: String,
+      required: false,
+    },
   },
   { _id: false }
 );

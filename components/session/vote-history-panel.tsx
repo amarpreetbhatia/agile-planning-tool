@@ -271,13 +271,13 @@ export function VoteHistoryPanel({ sessionId, storyId, className }: VoteHistoryP
               <div className="flex justify-between">
                 <span>Final range:</span>
                 <span className="font-medium">
-                  {formatValue(history[history.length - 1].statistics.min)} -{' '}
-                  {formatValue(history[history.length - 1].statistics.max)}
+                  {formatValue(history[history.length - 1].statistics?.min ?? 0)} -{' '}
+                  {formatValue(history[history.length - 1].statistics?.max ?? 0)}
                 </span>
               </div>
-              {history[0].statistics.max - history[0].statistics.min >
-                history[history.length - 1].statistics.max -
-                  history[history.length - 1].statistics.min && (
+              {(history[0].statistics?.max ?? 0) - (history[0].statistics?.min ?? 0) >
+                (history[history.length - 1].statistics?.max ?? 0) -
+                  (history[history.length - 1].statistics?.min ?? 0) && (
                 <p className="text-green-600 dark:text-green-400 mt-2">
                   ✓ Estimates converged across rounds
                 </p>

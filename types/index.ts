@@ -69,6 +69,10 @@ export interface IStory {
   githubIssueNumber?: number;
   githubRepoFullName?: string;
   comments?: IStoryComment[];
+  status?: 'ready' | 'not-ready' | 'estimated';
+  order?: number;
+  labels?: string[];
+  assignee?: string;
 }
 
 export interface IGitHubIntegration {

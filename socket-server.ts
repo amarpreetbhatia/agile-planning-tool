@@ -30,6 +30,9 @@ export interface ServerToClientEvents {
   'story:comment': (storyId: string, comment: any) => void;
   'vote:reminder': (message: string) => void;
   'voting-mode:changed': (votingMode: string) => void;
+  'stories:reordered': (data: { stories: any[] }) => void;
+  'story:status-updated': (data: { storyId: string; status: string }) => void;
+  'stories:bulk-updated': (data: { operation: string; storyIds: string[]; value?: any; stories: any[] }) => void;
 }
 
 export interface SocketData {

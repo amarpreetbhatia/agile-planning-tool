@@ -590,7 +590,12 @@
 
 ## Phase 2D: Backlog Management (Priority: P1)
 
-- [ ] 38. Implement story backlog
+- [x] 38. Implement story backlog
+
+
+
+
+
   - Build story list with drag-and-drop
   - Display story title, description, status
   - Show estimation status (estimated/not estimated)

@@ -17,28 +17,28 @@ import { Types } from 'mongoose';
 
 // Mock project for testing
 const mockProject: IProject = {
-  _id: new Types.ObjectId(),
+  _id: new Types.ObjectId() as any,
   projectId: 'test-project-123',
   name: 'Test Project',
   description: 'A test project for verification',
-  ownerId: new Types.ObjectId('507f1f77bcf86cd799439011'),
+  ownerId: new Types.ObjectId('507f1f77bcf86cd799439011') as any,
   members: [
     {
-      userId: new Types.ObjectId('507f1f77bcf86cd799439011'),
+      userId: new Types.ObjectId('507f1f77bcf86cd799439011') as any,
       username: 'owner-user',
       avatarUrl: 'https://example.com/avatar1.jpg',
       role: 'owner',
       joinedAt: new Date(),
     },
     {
-      userId: new Types.ObjectId('507f1f77bcf86cd799439012'),
+      userId: new Types.ObjectId('507f1f77bcf86cd799439012') as any,
       username: 'admin-user',
       avatarUrl: 'https://example.com/avatar2.jpg',
       role: 'admin',
       joinedAt: new Date(),
     },
     {
-      userId: new Types.ObjectId('507f1f77bcf86cd799439013'),
+      userId: new Types.ObjectId('507f1f77bcf86cd799439013') as any,
       username: 'member-user',
       avatarUrl: 'https://example.com/avatar3.jpg',
       role: 'member',

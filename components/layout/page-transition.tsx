@@ -16,19 +16,16 @@ const pageVariants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.3,
-      ease: 'easeOut',
-    },
   },
   exit: {
     opacity: 0,
     y: -20,
-    transition: {
-      duration: 0.2,
-      ease: 'easeIn',
-    },
   },
+};
+
+const pageTransition = {
+  duration: 0.3,
+  ease: [0.4, 0, 0.2, 1] as const,
 };
 
 export function PageTransition({ children }: PageTransitionProps) {
@@ -42,6 +39,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         initial="initial"
         animate="animate"
         exit="exit"
+        transition={pageTransition}
       >
         {children}
       </motion.div>

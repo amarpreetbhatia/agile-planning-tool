@@ -2,8 +2,14 @@ import { Resend } from 'resend';
 import { createEvent, EventAttributes } from 'ics';
 import { ISession, IEstimate, IUser } from '@/types';
 
-// Initialize Resend client
-const resend = new Resend(process.env.EMAIL_API_KEY);
+// Lazy initialize Resend client
+let resend: Resend | null = null;
+function getResendClient() {
+  if (!resend && process.env.EMAIL_API_KEY) {
+    resend = new Resend(process.env.EMAIL_API_KEY);
+  }
+  return resend;
+}
 
 // Email configuration
 const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@agilepoker.app';
@@ -48,7 +54,14 @@ async function processEmailQueue() {
     const job = emailQueue[0];
 
     try {
-      await resend.emails.send({
+      const client = getResendClient();
+      if (!client) {
+        console.warn('Resend client not initialized - skipping email');
+        emailQueue.shift();
+        continue;
+      }
+      
+      await client.emails.send({
         from: `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`,
         to: job.to,
         subject: job.subject,
@@ -446,7 +459,13 @@ export async function testEmailConfiguration(): Promise<boolean> {
       return false;
     }
 
-    await resend.emails.send({
+    const client = getResendClient();
+    if (!client) {
+      console.warn('Resend client not initialized');
+      return false;
+    }
+    
+    await client.emails.send({
       from: `${EMAIL_FROM_NAME} <${EMAIL_FROM}>`,
       to: testEmail,
       subject: 'Email Configuration Test',

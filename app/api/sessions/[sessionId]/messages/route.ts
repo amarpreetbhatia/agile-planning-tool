@@ -152,6 +152,40 @@ export async function POST(
       type: 'text',
     });
 
+    // Detect mentions in the message (@username)
+    const mentionRegex = /@(\w+)/g;
+    const mentions = [...sanitizedMessage.matchAll(mentionRegex)].map((match) => match[1]);
+
+    // Create notifications for mentioned users
+    if (mentions.length > 0) {
+      try {
+        const { createNotifications } = await import('@/lib/notifications');
+        
+        // Find mentioned participants
+        const mentionedParticipants = sessionDoc.participants.filter((p) =>
+          mentions.includes(p.username) && p.userId.toString() !== session.user.id
+        );
+
+        if (mentionedParticipants.length > 0) {
+          const mentionedUserIds = mentionedParticipants.map((p) => p.userId.toString());
+          await createNotifications(mentionedUserIds, {
+            type: 'mention',
+            title: 'You were mentioned',
+            message: `${session.user.username} mentioned you in ${sessionDoc.name}`,
+            link: `/sessions/${sessionId}`,
+            metadata: {
+              sessionId,
+              messageId: chatMessage._id.toString(),
+              mentionedBy: session.user.username,
+            },
+          });
+        }
+      } catch (notifError) {
+        console.error('Error creating mention notifications:', notifError);
+        // Don't fail the message if notification fails
+      }
+    }
+
     // Broadcast message to all participants via Socket.IO
     try {
       const io = getSocketServer();

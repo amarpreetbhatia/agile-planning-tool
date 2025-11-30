@@ -196,6 +196,20 @@ export interface IChatMessage {
   updatedAt: Date;
 }
 
+// Notification Types (Phase 2)
+export interface INotification {
+  _id: ObjectId;
+  userId: ObjectId; // Reference to User
+  type: 'project_invitation' | 'session_created' | 'session_starting' | 'session_ended' | 'mention';
+  title: string;
+  message: string;
+  link?: string; // Deep link to relevant page
+  read: boolean;
+  metadata?: any; // Type-specific data
+  createdAt: Date;
+  expiresAt: Date; // Auto-delete after 30 days
+}
+
 // Permission Types
 export type ProjectRole = 'owner' | 'admin' | 'member';
 

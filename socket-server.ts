@@ -33,6 +33,7 @@ export interface ServerToClientEvents {
   'stories:reordered': (data: { stories: any[] }) => void;
   'story:status-updated': (data: { storyId: string; status: string }) => void;
   'stories:bulk-updated': (data: { operation: string; storyIds: string[]; value?: any; stories: any[] }) => void;
+  'notification:new': (notification: any) => void;
 }
 
 export interface SocketData {
@@ -126,6 +127,12 @@ function setupSocketHandlers(
   // Connection handler
   io.on('connection', (socket: TypedSocket) => {
     console.log(`Client connected: ${socket.id} (User: ${socket.data.username})`);
+
+    // Join user-specific room for notifications
+    if (socket.data.userId) {
+      socket.join(`user:${socket.data.userId}`);
+      console.log(`User ${socket.data.username} joined notification room: user:${socket.data.userId}`);
+    }
 
     // Session join handler
     socket.on('session:join', async (sessionId: string) => {

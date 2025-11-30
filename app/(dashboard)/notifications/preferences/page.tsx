@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import NotificationPreferencesClient from '@/components/notifications/notification-preferences-client';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,7 +10,7 @@ export const metadata = {
 };
 
 export default async function NotificationPreferencesPage() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session) {
     redirect('/login');

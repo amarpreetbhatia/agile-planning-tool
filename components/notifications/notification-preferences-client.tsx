@@ -172,7 +172,7 @@ export default function NotificationPreferencesClient() {
             <div className="space-y-0.5">
               <Label htmlFor="email-session-invitations">Session Invitations</Label>
               <p className="text-sm text-muted-foreground">
-                Get notified when you're invited to a planning session
+                Get notified when you&apos;re invited to a planning session
               </p>
             </div>
             <Switch
@@ -214,7 +214,7 @@ export default function NotificationPreferencesClient() {
             <div className="space-y-0.5">
               <Label htmlFor="email-project-invitations">Project Invitations</Label>
               <p className="text-sm text-muted-foreground">
-                Get notified when you're invited to join a project
+                Get notified when you&apos;re invited to join a project
               </p>
             </div>
             <Switch

@@ -159,6 +159,28 @@ export async function POST(
       .populate('invitedBy', 'username avatarUrl')
       .populate('invitedUser', 'username email avatarUrl');
 
+    // Create notification if user exists
+    if (invitedUser) {
+      try {
+        const { createNotification } = await import('@/lib/notifications');
+        await createNotification({
+          userId: invitedUser._id.toString(),
+          type: 'project_invitation',
+          title: 'Project Invitation',
+          message: `${user.username} invited you to join ${project.name}`,
+          link: `/projects/${project.projectId}`,
+          metadata: {
+            projectId: project.projectId,
+            invitationId: invitation._id.toString(),
+            invitedBy: user.username,
+          },
+        });
+      } catch (notifError) {
+        console.error('Error creating notification:', notifError);
+        // Don't fail the invitation if notification fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: populatedInvitation,

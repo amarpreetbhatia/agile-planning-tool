@@ -2,6 +2,7 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { UserNav } from "@/components/auth/user-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { NotificationBell } from "@/components/notifications"
 import { Button } from "@/components/ui/button"
 import { Zap } from "lucide-react"
 
@@ -54,6 +55,7 @@ export async function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          {session?.user && <NotificationBell />}
           {session?.user ? (
             <UserNav user={session.user} />
           ) : (

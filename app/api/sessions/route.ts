@@ -113,6 +113,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Send in-app notifications to project members (excluding the creator)
+    try {
+      const { createNotifications } = await import('@/lib/notifications');
+      const memberIds = project.members
+        .filter((m: any) => m.userId.toString() !== user._id.toString())
+        .map((m: any) => m.userId.toString());
+
+      if (memberIds.length > 0) {
+        await createNotifications(memberIds, {
+          type: 'session_created',
+          title: 'New Planning Session',
+          message: `${user.username} created a new session: ${name.trim()}`,
+          link: `/sessions/${sessionId}`,
+          metadata: {
+            sessionId,
+            projectId: project.projectId,
+            createdBy: user.username,
+          },
+        });
+      }
+    } catch (notifError) {
+      console.error('Error creating in-app notifications:', notifError);
+      // Don't fail the session creation if notification fails
+    }
+
     // Return the created session
     return NextResponse.json(
       {

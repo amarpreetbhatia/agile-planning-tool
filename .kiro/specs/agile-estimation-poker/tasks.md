@@ -668,7 +668,12 @@
   - Save preferences to user profile
   - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.5_
 
-- [ ] 41. Implement in-app notifications
+- [x] 41. Implement in-app notifications
+
+
+
+
+
   - Create Notification model with type, message, link, read status
   - Create notification API routes (POST /api/notifications, GET /api/notifications, PATCH /api/notifications/[id]/read, DELETE /api/notifications/[id])
   - Create bell icon with unread count badge

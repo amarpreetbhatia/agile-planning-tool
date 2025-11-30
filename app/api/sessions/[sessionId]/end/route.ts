@@ -5,6 +5,7 @@ import Session from '@/models/Session';
 import Estimate from '@/models/Estimate';
 import User from '@/models/User';
 import { getSocketServer } from '@/socket-server';
+import { sendSessionSummaryEmail } from '@/lib/email';
 
 interface RouteContext {
   params: Promise<{
@@ -130,6 +131,19 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Archive the session
     sessionData.status = 'archived';
     await sessionData.save();
+
+    // Send email summaries to participants (async, don't wait)
+    if (process.env.ENABLE_EMAIL_NOTIFICATIONS !== 'false') {
+      const participantIds = sessionData.participants.map((p) => p.userId);
+      const participants = await User.find({
+        _id: { $in: participantIds },
+      });
+
+      // Send notifications asynchronously
+      sendSessionSummaryEmail(sessionData, estimates, participants).catch((error) => {
+        console.error('Failed to send session summary emails:', error);
+      });
+    }
 
     // Broadcast session end event to all participants via Socket.IO
     try {

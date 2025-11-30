@@ -6,6 +6,7 @@ import User from '@/models/User';
 import Project from '@/models/Project';
 import { nanoid } from 'nanoid';
 import { checkPermission } from '@/lib/permissions';
+import { sendSessionCreatedEmail } from '@/lib/email';
 
 // POST /api/sessions - Create a new session
 export async function POST(request: NextRequest) {
@@ -99,6 +100,18 @@ export async function POST(request: NextRequest) {
         },
       ],
     });
+
+    // Send email notifications to project members (async, don't wait)
+    if (process.env.ENABLE_EMAIL_NOTIFICATIONS !== 'false') {
+      const projectMembers = await User.find({
+        _id: { $in: project.members.map((m) => m.userId) },
+      });
+
+      // Send notifications asynchronously
+      sendSessionCreatedEmail(newSession, projectMembers).catch((error) => {
+        console.error('Failed to send session created emails:', error);
+      });
+    }
 
     // Return the created session
     return NextResponse.json(

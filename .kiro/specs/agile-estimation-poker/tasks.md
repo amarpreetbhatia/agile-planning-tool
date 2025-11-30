@@ -614,7 +614,12 @@
   - Persist filter preferences
   - _Requirements: 20.1, 20.2, 20.3, 20.4, 20.5_
 
-- [ ] 39. Implement bulk operations
+- [x] 39. Implement bulk operations
+
+
+
+
+
   - Add checkboxes to story list
   - Implement select all/none
   - Show selected count
@@ -635,7 +640,12 @@
 
 ## Phase 2E: Notifications (Priority: P1)
 
-- [ ] 40. Implement email notification system
+- [x] 40. Implement email notification system
+
+
+
+
+
   - Choose email service (SendGrid, AWS SES, or Resend)
   - Configure email templates
   - Create email sending utility

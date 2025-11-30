@@ -22,6 +22,21 @@ declare module 'next-auth' {
 }
 
 // User Types
+export interface INotificationPreferences {
+  email: {
+    sessionInvitations: boolean;
+    sessionReminders: boolean;
+    sessionSummaries: boolean;
+    projectInvitations: boolean;
+  };
+  inApp: {
+    sessionInvitations: boolean;
+    sessionReminders: boolean;
+    projectInvitations: boolean;
+    mentions: boolean;
+  };
+}
+
 export interface IUser {
   _id: ObjectId;
   githubId: string;
@@ -29,6 +44,7 @@ export interface IUser {
   email: string;
   avatarUrl: string;
   accessToken?: string; // Encrypted GitHub token for API access
+  notificationPreferences?: INotificationPreferences;
   createdAt: Date;
   updatedAt: Date;
 }

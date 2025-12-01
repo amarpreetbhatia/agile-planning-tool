@@ -109,8 +109,8 @@ This software is made available for **viewing and reference purposes only**.
 ### Commercial Licensing
 
 Interested in using this software for commercial purposes? Please contact:
-- Email: [your-email@example.com]
-- Website: [your-website.com]
+- Email: [amarpreetbhatia@gmail.com]
+- Website: [[https://amarpreetbhatia.github.io/](https://amarpreetbhatia.github.io/)]
 
 See the [LICENSE](LICENSE) file for complete terms and conditions.
 

@@ -1,0 +1,10 @@
+/**
+ * Copyright (c) 2024 [Your Name/Organization]
+ * All Rights Reserved
+ * 
+ * This file is part of a proprietary software project.
+ * Unauthorized copying, modification, distribution, or use
+ * of this file, via any medium, is strictly prohibited.
+ * 
+ * For licensing inquiries: [your-email@example.com]
+ */

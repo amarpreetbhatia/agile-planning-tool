@@ -93,6 +93,27 @@ See `.env.example` for required environment variables.
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
-## License
+## Copyright and License
 
-MIT
+Copyright (c) 2024 [Your Name/Organization]. All Rights Reserved.
+
+This software is made available for **viewing and reference purposes only**.
+
+### ⚠️ Important Restrictions
+
+- ❌ **No Commercial Use** without explicit written permission
+- ❌ **No Forking** or downloading for personal/commercial projects
+- ❌ **No Distribution** or redistribution of the code
+- ✅ **Viewing Only** - You may view and study the code
+
+### Commercial Licensing
+
+Interested in using this software for commercial purposes? Please contact:
+- Email: [your-email@example.com]
+- Website: [your-website.com]
+
+See the [LICENSE](LICENSE) file for complete terms and conditions.
+
+---
+
+**Note**: This is a proprietary codebase. Unauthorized use, reproduction, or distribution is strictly prohibited.

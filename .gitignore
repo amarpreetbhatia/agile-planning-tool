@@ -35,3 +35,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.github/GITHUB_SETUP_CHECKLIST.md
+.github/MANUAL_SETUP_REQUIRED.md
+.github/REPOSITORY_SETUP.md

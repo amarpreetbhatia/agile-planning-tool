@@ -28,6 +28,7 @@ interface SessionPageLayoutProps {
   pokerCards: ReactNode;
   githubIntegration?: ReactNode;
   chatPanel?: ReactNode;
+  embedManager?: ReactNode;
   className?: string;
 }
 
@@ -44,6 +45,7 @@ export function SessionPageLayout({
   pokerCards,
   githubIntegration,
   chatPanel,
+  embedManager,
   className,
 }: SessionPageLayoutProps) {
   const isMobile = useIsMobile();

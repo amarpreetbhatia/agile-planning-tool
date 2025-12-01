@@ -12,6 +12,7 @@ import { SessionEndHandler } from '@/components/session/session-end-handler';
 import { SessionPageLayout } from '@/components/session/session-page-layout';
 import { SessionNotFound } from '@/components/error/session-not-found';
 import { SessionChatWrapper } from '@/components/session/session-chat-wrapper';
+import { EmbedManager } from '@/components/session/embed-manager';
 
 interface SessionPageProps {
   params: Promise<{
@@ -91,19 +92,26 @@ export default async function SessionPage({ params }: SessionPageProps) {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>GitHub Integration</CardTitle>
-                  <GitHubIntegrationDialog
-                    sessionId={sessionData.sessionId}
-                    isHost={isHost}
-                  />
+                  <div className="flex items-center gap-2">
+                    <EmbedManager sessionId={sessionData.sessionId} isHost={isHost} />
+                    <GitHubIntegrationDialog
+                      sessionId={sessionData.sessionId}
+                      isHost={isHost}
+                    />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Import stories from your GitHub projects
+                  Import stories from your GitHub projects or embed external tools
                 </p>
               </CardContent>
             </Card>
-          ) : null
+          ) : (
+            <div className="flex justify-end">
+              <EmbedManager sessionId={sessionData.sessionId} isHost={isHost} />
+            </div>
+          )
         }
         storyManager={
           <StoryManager

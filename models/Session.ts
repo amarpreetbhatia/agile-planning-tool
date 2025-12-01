@@ -137,6 +137,52 @@ const GitHubIntegrationSchema = new Schema<IGitHubIntegration>(
   { _id: false }
 );
 
+const ExternalEmbedSchema = new Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ['miro', 'figma', 'google-docs', 'google-sheets'],
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+    embedUrl: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    addedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    panelState: {
+      type: {
+        width: Number,
+        height: Number,
+        x: Number,
+        y: Number,
+        minimized: Boolean,
+      },
+      required: false,
+    },
+  },
+  { _id: false }
+);
+
 const SessionSchema = new Schema<ISession>(
   {
     sessionId: {
@@ -183,6 +229,10 @@ const SessionSchema = new Schema<ISession>(
     githubIntegration: {
       type: GitHubIntegrationSchema,
       required: false,
+    },
+    externalEmbeds: {
+      type: [ExternalEmbedSchema],
+      default: [],
     },
   },
   {

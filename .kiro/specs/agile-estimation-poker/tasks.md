@@ -694,6 +694,7 @@
 
 
 
+
   - Choose whiteboard library (Excalidraw, tldraw, or Fabric.js)
   - Install and configure library
   - Create whiteboard component wrapper
@@ -717,7 +718,12 @@
   - Allow viewing snapshots in modal
   - _Requirements: 24.1, 24.2, 24.3, 24.4, 24.5_
 
-- [ ] 43. Implement external tool embedding
+- [x] 43. Implement external tool embedding
+
+
+
+
+
   - Build embed dialog with URL input
   - Validate URL format for supported tools
   - Extract embed parameters from URL

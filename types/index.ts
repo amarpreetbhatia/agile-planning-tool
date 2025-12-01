@@ -110,6 +110,7 @@ export interface ISession {
   currentStory?: IStory;
   stories: IStory[];
   githubIntegration?: IGitHubIntegration;
+  externalEmbeds?: IExternalEmbed[]; // Phase 2
   createdAt: Date;
   updatedAt: Date;
 }
@@ -221,6 +222,24 @@ export interface IWhiteboardSnapshot {
   title?: string; // Optional title for the snapshot
   createdAt: Date;
   updatedAt: Date;
+}
+
+// External Tool Embed Types (Phase 2)
+export interface IExternalEmbed {
+  id: string;
+  type: 'miro' | 'figma' | 'google-docs' | 'google-sheets';
+  url: string;
+  embedUrl: string; // Processed embed URL
+  title: string;
+  addedBy: ObjectId;
+  addedAt: Date;
+  panelState?: {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+    minimized: boolean;
+  };
 }
 
 // Permission Types

@@ -14,6 +14,9 @@ export interface ClientToServerEvents {
   'chat:typing': (sessionId: string, isTyping: boolean) => void;
   'whiteboard:update': (sessionId: string, data: any) => void;
   'whiteboard:snapshot': (sessionId: string, snapshotId: string) => void;
+  'embed:added': (sessionId: string, embed: any) => void;
+  'embed:removed': (sessionId: string, embedId: string) => void;
+  'embed:state-updated': (sessionId: string, embedId: string, panelState: any) => void;
 }
 
 export interface ServerToClientEvents {
@@ -38,6 +41,9 @@ export interface ServerToClientEvents {
   'notification:new': (notification: any) => void;
   'whiteboard:update': (data: any, userId: string, username: string) => void;
   'whiteboard:snapshot': (snapshot: any) => void;
+  'embed:added': (embed: any) => void;
+  'embed:removed': (embedId: string) => void;
+  'embed:state-updated': (embedId: string, panelState: any) => void;
 }
 
 export interface SocketData {
@@ -364,6 +370,24 @@ function setupSocketHandlers(
     socket.on('whiteboard:snapshot', (sessionId: string, snapshotId: string) => {
       // Broadcast snapshot creation to all participants
       io!.to(sessionId).emit('whiteboard:snapshot', { snapshotId });
+    });
+
+    // Embed added handler
+    socket.on('embed:added', (sessionId: string, embed: any) => {
+      // Broadcast new embed to all participants
+      io!.to(sessionId).emit('embed:added', embed);
+    });
+
+    // Embed removed handler
+    socket.on('embed:removed', (sessionId: string, embedId: string) => {
+      // Broadcast embed removal to all participants
+      io!.to(sessionId).emit('embed:removed', embedId);
+    });
+
+    // Embed state updated handler
+    socket.on('embed:state-updated', (sessionId: string, embedId: string, panelState: any) => {
+      // Broadcast state update to other participants (not to sender)
+      socket.to(sessionId).emit('embed:state-updated', embedId, panelState);
     });
 
     // Disconnection handler

@@ -4,3 +4,4 @@ export { default as Estimate } from './Estimate';
 export { default as Project } from './Project';
 export { default as Invitation } from './Invitation';
 export { default as ChatMessage } from './ChatMessage';
+export { default as WhiteboardSnapshot } from './WhiteboardSnapshot';

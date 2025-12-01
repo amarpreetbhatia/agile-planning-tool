@@ -210,6 +210,19 @@ export interface INotification {
   expiresAt: Date; // Auto-delete after 30 days
 }
 
+// Whiteboard Types (Phase 2)
+export interface IWhiteboardSnapshot {
+  _id: ObjectId;
+  sessionId: ObjectId; // Reference to Session
+  storyId?: string; // Optional story attachment
+  createdBy: ObjectId; // Reference to User
+  data: any; // Whiteboard library-specific data
+  imageUrl?: string; // PNG/SVG export URL
+  title?: string; // Optional title for the snapshot
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Permission Types
 export type ProjectRole = 'owner' | 'admin' | 'member';
 

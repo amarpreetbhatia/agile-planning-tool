@@ -12,6 +12,8 @@ export interface ClientToServerEvents {
   'estimate:finalize': (sessionId: string, value: number) => void;
   'session:end': (sessionId: string) => void;
   'chat:typing': (sessionId: string, isTyping: boolean) => void;
+  'whiteboard:update': (sessionId: string, data: any) => void;
+  'whiteboard:snapshot': (sessionId: string, snapshotId: string) => void;
 }
 
 export interface ServerToClientEvents {
@@ -34,6 +36,8 @@ export interface ServerToClientEvents {
   'story:status-updated': (data: { storyId: string; status: string }) => void;
   'stories:bulk-updated': (data: { operation: string; storyIds: string[]; value?: any; stories: any[] }) => void;
   'notification:new': (notification: any) => void;
+  'whiteboard:update': (data: any, userId: string, username: string) => void;
+  'whiteboard:snapshot': (snapshot: any) => void;
 }
 
 export interface SocketData {
@@ -348,6 +352,18 @@ function setupSocketHandlers(
     socket.on('chat:typing', (sessionId: string, isTyping: boolean) => {
       // Broadcast typing status to other participants (not to sender)
       socket.to(sessionId).emit('chat:typing', socket.data.userId!, socket.data.username!, isTyping);
+    });
+
+    // Whiteboard update handler
+    socket.on('whiteboard:update', (sessionId: string, data: any) => {
+      // Broadcast whiteboard changes to other participants (not to sender)
+      socket.to(sessionId).emit('whiteboard:update', data, socket.data.userId!, socket.data.username!);
+    });
+
+    // Whiteboard snapshot handler
+    socket.on('whiteboard:snapshot', (sessionId: string, snapshotId: string) => {
+      // Broadcast snapshot creation to all participants
+      io!.to(sessionId).emit('whiteboard:snapshot', { snapshotId });
     });
 
     // Disconnection handler
